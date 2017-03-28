@@ -1,7 +1,8 @@
 import math
 import numpy as np
 from matplotlib import pyplot as plt
-X=[40,40]
+
+
 
 def waterVel(X):
     x,y=X[0],X[1]
