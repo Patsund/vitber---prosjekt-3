@@ -32,8 +32,6 @@ for h in times:
     print(thiserror)
     errorArr.append(thiserror)
 print("X:",X)
-#Starter shit på nytt P: skal ikke være nødvendig lenger
-X=[40,40]
 h0=1 #sekund
 thiserror = plotThing(X,h0)
 while thiserror<10:
