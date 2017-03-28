@@ -15,7 +15,7 @@ def eq2(X):
 def f(foo,X,t): #Beregner w(i+1) med Eulers metode
     x=X[0]
     y=X[1]
-    Z=eq1(X)
+    Z=eq2(X)
     Y=[X[0]+t*Z[0],X[1]+t*Z[1]]
     x=Y[0]
     y=Y[1]
