@@ -2,7 +2,7 @@ import math
 import numpy as np
 from matplotlib import pyplot as plt
 X=[40,40]
-def eq1(X):
+def eq2(X):
     x=X[0]
     y=X[1]
     R=math.sqrt(x**2+y**2)
