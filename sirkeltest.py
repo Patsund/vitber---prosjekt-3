@@ -2,15 +2,21 @@ import math
 import numpy as np
 from matplotlib import pyplot as plt
 X=[40,40]
-def f(X,t): #Beregner w(i+1) med Eulers metode
+def eq1(X):
     x=X[0]
     y=X[1]
     R=math.sqrt(x**2+y**2)
     T=24*60*60 #setter perioden til 1 døgn i sekunder
     factor=2*math.pi/T
     Y=[x,y]
-    Y[0]+=t*factor*(-y)
-    Y[1]+=t*factor*x
+    Y[0]+=factor*(-y)
+    Y[1]+=factor*x
+    return Y
+def f(foo,X,t): #Beregner w(i+1) med Eulers metode
+    x=X[0]
+    y=X[1]
+    Z=eq1(X)
+    Y=[X[0]+t*Z[0],X[1]+t*Z[1]]
     x=Y[0]
     y=Y[1]
     R=math.sqrt(x**2+y**2)
