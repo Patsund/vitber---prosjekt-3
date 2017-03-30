@@ -52,88 +52,83 @@ def genLogSpace( array_size, num ):
 def errorForEuler(X,h,figname):
     #print(X) #debugging
     x,y=X[0],X[1]
-    xList,yList=[],[]
     Y=[x,y] #oppretter en ny matrise for å unngå å endre på X. Må skje siden vi endrer på Y ila neste for-løkke
-    xList.append(Y[0])
-    yList.append(Y[1])
     timeFinal=2*24*60*60
     timeNow=0
     for i in range(int(2*24*60*60/h)):
         h=min(h,timeFinal-timeNow)
         timeNow+=h
         Y=eulerForEq2(Y,h)
-        xList.append(Y[0])
-        yList.append(Y[1])
+        plotTrajectory(Y,figname)
     X=np.array(X)#gjør om til numpyarrays for å kunne gjøre vektoraritmetikk. Kunne i utgangspunktet tatt inn nparrays,
     Y=np.array(Y)#men funksjonen er nå kompatibel med både vanlige arrays og nparrays.
     vecError=X-Y #finner vektoren fra X til Y
-    if figname!="dummy.pdf":
-        plt.figure(figname)
-        plt.plot(xList,yList)
-        plt.savefig(figname)
-        plt.close()
+    plt.savefig(figname)
     error=np.sqrt(vecError[0]**2+vecError[1]**2)#finner avstanden mellom startpunktet og sluttpunktet
     return error
 
 def errorForETM(X,h,figname):
     x,y=X[0],X[1]
-    xList,yList=[],[]
     timeNow=0
     finalTime=2*24*60*60
     n=int(finalTime/h)
+    print(h)
     newX=np.array([x,y])
-    xList.append(newX[0])
-    yList.append(newX[1])
+    plt.figure()
     for i in range(n+1):
         h=min(h,finalTime-timeNow) #setter h til å være gjenværende tid dersom gjenværende tid er mindre enn h
         newX=ETMforEq2(newX,timeNow,h,Vwater)
-        xList.append(newX[0])
-        yList.append(newX[1])
+        plotTrajectory(newX,figname)
         timeNow+=h
     X=np.array(X)
     newX=np.array(newX)
     vecError=X-newX
     #print(vecError)
-    if figname!="dummy.pdf":
-        plt.figure(figname)
-        plt.plot(xList,yList)
-        plt.savefig(figname)
-        plt.close()
+    plt.savefig(figname)
+    print("noe",h)
     error=np.sqrt(vecError[0]**2+vecError[1]**2)
     return error
 
 def plotTrajectory(X,figname):
     plt.figure(figname)
     plt.plot(X)
+print("1")
 times=np.logspace(2,4,10)
+print(2)
 errorArr1=[]
 errorArr2=[]
+print(3)
 X=[0,100]
+print(4)
 for h in times: #lager en array med avstand mellom start- og sluttpunkt i henhold til økende tidssteg
-    newname="pdfer/figure"
+    print(5)
+    newname="BUTIFUL/BUTIFUL"
+    print(5.5)
     newname+=str(h)
+    print(6)
     eulname=newname+"eul.pdf"
     etmname=newname+"etm.pdf"
+    print(7)
     errorArr2.append(errorForETM(X,h,etmname))
     errorArr1.append(errorForEuler(X,h,eulname))
 
-
+"""
 h0=24*60*60 #sekund
 print("Høyeste error Euler",errorArr1[-4])
 print("Høyeste error ETM",errorArr2[-4])
-thiserror = errorForEuler(X,h0,"dummy.pdf")
+thiserror = errorForEuler(X,h0)
 while thiserror>1:#finner høyeste tidssteg som gir feil mindre enn 10 meter
     h0-=1
-    thiserror = errorForEuler(X,h0,"dummy.pdf")
+    thiserror = errorForEuler(X,h0)
     #print(thiserror)
 tidsstegEuler=h0
 print("for å akkurat få en error akkurat enn 10 meter med preisjon på 1 sekund må tidssteget være",h0,"sekunder")
 h0=60*60
-thiserror = errorForETM(X,h0,"dummy.pdf")
+thiserror = errorForETM(X,h0)
 print("første verdi",thiserror)
 while thiserror>1:
     h0-=1
-    thiserror = errorForETM(X,h0,"dummy.pdf")
+    thiserror = errorForETM(X,h0)
     #print(thiserror)
 tidsstegETM=h0
 print("for å akkurat få en error mindre enn 10 meter med presisjon på 1 sekund med ETM må tidssteget være",h0,"sekunder")
@@ -143,18 +138,19 @@ plt.loglog(times,errorArr1,"ro")
 plt.loglog(times,errorArr2,"bo")
 plt.xlabel("tid / sekunder")
 plt.ylabel("error / meter")
-plt.savefig("pdfer/globalError.pdf")
+plt.savefig("globalError.pdf")
 X=(100,0)
 n=30
 endTimeEuler,endTimeETM=0,0
 for i in range(n):
     startTimeEuler=time.time()
-    errorEuler=errorForEuler(X,tidsstegEuler,"dummy.pdf")
+    errorEuler=errorForEuler(X,tidsstegEuler)
     endTimeEuler+=time.time()-startTimeEuler
     startTimeETM=time.time()
-    errorETM=errorForETM(X,tidsstegETM,"dummy.pdf")
+    errorETM=errorForETM(X,tidsstegETM)
     endTimeETM+=time.time()-startTimeEuler
 endTimeEuler/=n
 endTimeETM/=n
 print("ETMtid/Eulertid",endTimeETM/endTimeEuler)
 print("Error for Euler",errorEuler,"brukte",endTimeEuler,"sekunder \nError for ETM",errorETM,"brukte",endTimeETM,"sekunder.")
+"""
