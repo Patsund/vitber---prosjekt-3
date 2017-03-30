@@ -4,9 +4,9 @@ from matplotlib import pyplot as plt
 
 def Vwater(t,X):
     x,y=X[0],X[1]
-    T=24*60*60
+    T=24*60*60 #periode
     factor=2*math.pi/T
-    Y=[factor*(-X[1]),factor*X[0]]
+    Y=[factor*(-X[1]),factor*X[0]] #returnerer hastigheten basert på koordinater i henhold til Vw fra oppgave 1
     return Y
 
 def eulerForEq1(X,Vwater,alpha,m,Xdot,h):
@@ -26,7 +26,7 @@ def ETMforEq1(X,Vwater,alpha,m,Xdot,h,t):
     x,y=X[0],X[1]
     waterVelocity=Vwater(t,X)
     R=math.sqrt(X[0]**2+X[1]**2)
-    print("R",R,"Vw",waterVelocity,"Xdot",Xdot)
+    #print("R",R,"Vw",waterVelocity,"Xdot",Xdot)
     XdotTilde=[Xdot[0]+h*(alpha/m)*(waterVelocity[0]-Xdot[0]),Xdot[1]+h*(alpha/m)*(waterVelocity[1]-Xdot[1])]
     Xtilde=[X[0]+h*Xdot[0],X[1]+h*Xdot[1]]
     waterVelocityTilde=Vwater(t+h,Xtilde)
