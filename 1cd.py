@@ -57,9 +57,9 @@ def task1c():
     numberOfTimesteps = 10
     analyticEndpoint = np.array(analyticSolution(L, alpha, m))
     print("Analytisk ende", analyticEndpoint)
-    timestepArray = np.linspace(100, 300, num=numberOfTimesteps)
+    timestepArray = np.linspace(10, 300, num=numberOfTimesteps)
     errorArray = np.zeros(numberOfTimesteps)
-    for i in range(1):  # numberOfTimesteps
+    for i in range(numberOfTimesteps): #numberOfTimesteps
         h = timestepArray[i]
         plt.figure(i)
         plt.title("tidssteg " + str(h))
@@ -80,16 +80,16 @@ def task1c():
         coordinateArray = sorted(coordinateArray, key=lambda e: e[0])
         xValueArray = [k[0] for k in coordinateArray]
         yValueArray = [k[1] for k in coordinateArray]
-        plt.plot(xValueArray, yValueArray, 'ro', markersize=0.4)
-
+        plt.plot(xValueArray, yValueArray, 'ro', markersize=1)
+        plt.plot([analyticEndpoint[0]], [analyticEndpoint[1]], 'ko', markersize=4)
         errorArray[i] = np.linalg.norm(np.array(X) - analyticEndpoint)
         print(errorArray)
 
-    # plt.figure()
-    # plt.plot(timestepArray,errorArray)
-    # plt.xlabel("timestep / sekunder")
-    # plt.ylabel("error / meter")
-    # plt.title("Avvik fra analytisk løsning")
+    plt.figure()
+    plt.plot(timestepArray,errorArray)
+    plt.xlabel("timestep / sekunder")
+    plt.ylabel("error / meter")
+    plt.title("Avvik fra analytisk løsning")
     plt.show()
 
 def task1d():
@@ -157,5 +157,5 @@ def task1d():
     print("Final error:", np.linalg.norm(X - analyticEndpoint))
     plt.show()
 
-#task1c()
-task1d()
+task1c()
+#task1d()
