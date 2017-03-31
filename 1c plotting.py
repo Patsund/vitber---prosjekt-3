@@ -2,12 +2,6 @@ import math
 import numpy as np
 from matplotlib import pyplot as plt
 
-##Constants
-L = 1.0E+02
-X=[L,0]
-Xdot=[0,0]
-alpha=5e-5
-m=1e-2
 T = 24 * 60 * 60
 factor = 2 * math.pi / T
 
@@ -54,42 +48,55 @@ def ETMforEq1(X,Vwater,alpha,m,Xdot,h,t):
     newX=X+h/2*(Xdot+newXdot)
     return newX,newXdot
 
-numberOfTimesteps = 10
-analyticEndpoint = np.array(analyticSolution(L,alpha,m))
-print("Analytisk ende", analyticEndpoint)
-timestepArray = np.linspace(100, 300, num=numberOfTimesteps)
-errorArray = np.zeros(numberOfTimesteps)
-for i in range(1): #numberOfTimesteps
-    h = timestepArray[i]
-    plt.figure(i)
-    plt.title("tidssteg " + str(h))
+def task1c():
+    ##Constants
+    L = 1.0E+02
+    alpha = 5e-5
+    m = 1e-2
 
-    coordinateArray = np.array([[0,0]])
-    X = np.array([L, 0])
+    numberOfTimesteps = 10
+    analyticEndpoint = np.array(analyticSolution(L, alpha, m))
+    print("Analytisk ende", analyticEndpoint)
+    timestepArray = np.linspace(100, 300, num=numberOfTimesteps)
+    errorArray = np.zeros(numberOfTimesteps)
+    for i in range(1):  # numberOfTimesteps
+        h = timestepArray[i]
+        h = 2.1*m/alpha
+        plt.figure(i)
+        plt.title("tidssteg " + str(h))
+        coordinateArray = np.array([[0, 0]])
+        X = np.array([L, 0])
+        Xdot = np.array([0, 0.000001])
+        for j in range(int(2 * 24 * 60 * 60 / h) + 1):
+            X, Xdot = ETMforEq1(X, Vwater, alpha, m, Xdot, h, h * j)
+            dummyarray = np.array([X])
+            # print(dummyarray)
+            coordinateArray = np.concatenate((coordinateArray, dummyarray), axis=0)
+        h = (2 * 24 * 60 * 60) % h
+        X, Xdot = ETMforEq1(X, Vwater, alpha, m, Xdot, h, 2 * 24 * 60 * 60 - h)
+        print("thisEndpoint:", X)
 
-    Xdot = np.array([0, 0])
-    for j in range(int(2 * 24 * 60 * 60 / h) +1):
-        X, Xdot = ETMforEq1(X, Vwater, alpha, m, Xdot, h, h * j)
-        dummyarray = np.array([X])
-        #print(dummyarray)
-        coordinateArray = np.concatenate((coordinateArray, dummyarray), axis=0)
-    h = (2 * 24 * 60 * 60) % h
-    X, Xdot = ETMforEq1(X, Vwater, alpha, m, Xdot, h, 2 * 24 * 60 * 60 - h)
-    print("thisEndpoint:", X)
+        # Her sorteres arrayet så det kan plottes
+        coordinateArray = np.delete(coordinateArray, 0, 0)  # Fjerner 0,0 som ble brukt for å initialisere arrayet
+        coordinateArray = sorted(coordinateArray, key=lambda e: e[0])
+        xValueArray = [k[0] for k in coordinateArray]
+        yValueArray = [k[1] for k in coordinateArray]
+        plt.plot(xValueArray, yValueArray, 'ro', markersize=0.4)
 
-    #Her sorteres arrayet så det kan plottes
-    coordinateArray = np.delete(coordinateArray, 0, 0) #Fjerner 0,0 som ble brukt for å initialisere arrayet
-    coordinateArray = sorted(coordinateArray, key=lambda e:e[0])
-    xValueArray = [k[0] for k in coordinateArray]
-    yValueArray = [k[1] for k in coordinateArray]
-    plt.plot(xValueArray, yValueArray, 'ro', markersize=0.4)
+        errorArray[i] = np.linalg.norm(np.array(X) - analyticEndpoint)
+        print(errorArray)
 
-    errorArray[i] = np.linalg.norm(np.array(X) - analyticEndpoint)
-    print(errorArray)
+    # plt.figure()
+    # plt.plot(timestepArray,errorArray)
+    # plt.xlabel("timestep / sekunder")
+    # plt.ylabel("error / meter")
+    # plt.title("Avvik fra analytisk løsning")
+    plt.show()
 
-#plt.figure()
-#plt.plot(timestepArray,errorArray)
-#plt.xlabel("timestep / sekunder")
-#plt.ylabel("error / meter")
-#plt.title("Avvik fra analytisk løsning")
-plt.show()
+task1c()
+
+def task1d():
+    
+
+
+task1d()
