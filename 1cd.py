@@ -65,7 +65,7 @@ def task1c():
         plt.title("tidssteg " + str(h))
         coordinateArray = np.array([[0, 0]])
         X = np.array([L, 0])
-        Xdot = np.array([0, 0.000001])
+        Xdot = np.array([0, 0])
         for j in range(int(2 * 24 * 60 * 60 / h) + 1):
             X, Xdot = ETMforEq1(X, Vwater, alpha, m, Xdot, h, h * j)
             dummyarray = np.array([X])
@@ -101,7 +101,7 @@ def task1d():
     totalTime = 48* 3600
     deviationLimit = 0.1
     X = np.array([L, 0])
-    Xdot = np.array([0, 0.000001])
+    Xdot = np.array([0, 0])
     timeStepArray = []
     deviationArray = []
     coordinateArray = []
@@ -161,5 +161,5 @@ def task1d():
     print("Final error:", np.linalg.norm(X - analyticEndpoint))
     plt.show()
 
-#task1c()
-task1d()
+task1c()
+#task1d()
