@@ -3,3 +3,5 @@
 2. Trenger vi å si noe om gyldigheten til modellene/ligningene?
 
 3. Hva skjer i 1cGlobalError.pdf (ligger i sharelatex)?
+
+4. Bruker vi fornuftige justeringer i det variable tidssteget?

@@ -28,18 +28,28 @@ Oppgave 1
   VARIABLE TIMESTEP
 	1. Apply to scenario from 1c 
 	2. Plot trajectory
-	3. Plot development of timestep over time (semilog?)
+	3. Plot development of timestep over time
 	4. Discuss the result (for every task really)
   
 Oppgave 2
 
   a
-  
+	1. X0 given, transport 10 days
+	2. Plot trajectory in xy coordinates using different start dates (1. -10. feb)
+	3. Compare with others, should be exactly same
+	
   b
+	1. Plot trajectory on MAP
+	2. Plot trajectory for 3 additional positions
   
 Oppgave 3
 
-  a
+  a - OBS! Her må alt være i numpy arrays og vi kjører vektorisering for å få en effektiv kode
+	1. Randomly place Np particles i intiial square (vil ha Np = 100000 ved endelig kjøring)
+	2. Plot position of all particles at t = 0, 2, 4, 6, 8, 10
   
   b
-  
+	1. Define a grid with 800 meters x 800 meters cells with same coordinates as map.
+	2. Calculate concentration by counting the number of particles in each cell
+	3. Plot the concentration grid at t = 0, 2, 4, 6, 8, 10. 
+	4. Her angir vi fargestyrke proporsjonalt med concentration?
