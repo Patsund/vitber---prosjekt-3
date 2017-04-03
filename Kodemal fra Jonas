@@ -1,0 +1,77 @@
+import Tutorial_ParticleTracking as Tut_Tr
+import Tut_Integrator as Tut_Int
+
+if __name__ = "__main__"
+
+MasterFlag = {
+    -1: "Testspace",
+    0: "CheckoutInterpolatpr",
+    1: "PlotOnMap"
+} [0] #Bruker denne som switch
+if MasterFlag  == "CheckoutInterpolatpr":
+    Tut_Tr.simulateParticlesMoving()
+elif MasterFlag  == "plotOnMap"
+    #pass
+    dataSet = xr.open_dataset("adresse")
+    Tut:Plt.plotTrajectoriesnimap()
+else:
+    dataSet = xr.open_dataset("adresse")
+    print(dataSet) #viser oss masse metadata og shit
+    time_initial = dataSet.time[0] #er en hel jævle classe, men numpy holder styr på ting for oss
+    h = np.timedelta(3600, 's')  #vi gidder ikke interpolere i tid. Dette er minste oppløsning så vi velger et lite timestep
+    time_final = time_initial + np.timedelta64(1, 'D') #1 dag?
+    velocityField = Tut_ex.Interpolator(dataSet)
+    X0 = np.array([-3e6,-1.3e6])
+    x1 = Tut_UtilifyFunc.particleTrajectory(X0,time_initial, h, time_final, velocity_field, Tut_Int.euler)
+    #sender euler som en funksjon ved å droppe parentes
+    print(Tut_Int.euler)
+
+#filer:
+##integrator
+import numpy as np
+
+def euler(X-now, h, time_now, velocityField):
+    dt = h / bp.timedelta64(1,'s')
+    dX_dt = velcoityField(X_now, time_now)
+    #X_next = X_now + h*dX_dt #fycked fordi h er time 64-variabel, og den andre er float
+    X_next = X_now + dt*dX_dt
+    return Xnext
+
+#Modulær 
+
+##Utility_functions
+import numpy as np
+import integrator
+def particleTrajectory(X0, time_final, h, time_initial, velocityField, integrator):
+    numberOfTimeSteps = int((time_final - time_initial) / h)
+    X = np.zeros((numberOfTimeSteps + 1 + 1, *X0.shape)) #VIKTIG: *X0.shape (shape gir dimensjoner? [2, 1000])
+    #Stjerne pakker ut tupler (posisjonelle argumenter)
+    #Vektorielt for å gjøre dette for en rekke med posisjoner
+    X[0,:] = X_inital #[0, alle samma] #Vi trenger tydeligvis time initial med videre, derav en +1 over
+    time_now = time_initial
+    
+    for step in range(numberOfTImeSteps + 1): #Denne +1 ses igjen over. Må ha en ekstra for å få plass (?)
+        h = min(h, time_final - time_now)
+        time_now += h #numpy håndterer time64-opplegg
+        
+        X[step + 1, :] = integrator(X[step, :], time_now, h, velocityField)
+    return X
+
+##examplefile from wiki
+class Interpolator()
+def __call__(self,X,t)
+
+##TutorialParticleTracking
+import xarray as xr
+import numpy as np
+import Tutorial_examleFileFromWiki as Tut_ex
+
+def simulateParticlesMoving():
+    dataPath = "Norkyst800.nc"
+    dataSet = xr.poen(datapath)
+    velocityField = Tut_ex.Interpolator(dataset = dataSet) #Dette er det samme som vi hadde i prosjektet!
+    #to test the object
+    time = dataSet.time[3]
+    
+    X = np.array([-3e6,-1.3e6]).reshape(2,1)
+    print(velocityField(X,time))
