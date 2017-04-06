@@ -10,6 +10,17 @@ def Vwater(t,X):
     Y = [factor*(-X[1]), factor*X[0]]
     return Y
 
+def eulerForEq1(X,Vwater,alpha,m,Xdot,h):
+    x,y=X[0],X[1]
+    VwaterVector=Vwater(h,X)
+    x+=h*Xdot[0]
+    y+=h*Xdot[1]
+    newX=[x,y]
+    speedx,speedy=Xdot[0],Xdot[1]
+    speedx+=h*(alpha/m)*(VwaterVector[0]-speedx)
+    speedy+=h*(alpha/m)*(VwaterVector[1]-speedy)
+    newXdot=[speedx,speedy]
+    return newX,newXdot
 
 
 def fForEq2(X,t):
@@ -140,12 +151,12 @@ def task1d():
             h=100
             print("initializing h from",h,"seconds")
             Xeul, XdotEul = eulerForEq1(X,Vwater,alpha,m,Xdot,h)
-            Xtrap, XdotTrap = ETMforEq1(X, Vwater, alpha, m, Xdot, h, timeNow)
+            Xtrap = rk2(X,Vwater,fForEq1,h,timeNow)
             thisDeviation = np.linalg.norm(Xtrap - Xeul)
             while thisDeviation>deviationLimit:
                 h-=1
                 Xeul, XdotEul = eulerForEq1(X,Vwater,alpha,m,Xdot,h)
-                Xtrap, XdotTrap = ETMforEq1(X, Vwater, alpha, m, Xdot, h, timeNow)
+                Xtrap
                 thisDeviation = np.linalg.norm(Xtrap - Xeul)
             print("h initialized to",h,"seconds")
         h = min(h, totalTime - timeNow)

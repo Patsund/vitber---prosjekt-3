@@ -18,9 +18,9 @@ class Interpolator():
         self.dataset = dataset
 
     def get_interpolators(self, X, it):
-        # Add a buffer of cells around the extent of the particle cloud
+        # Add a buffer of cells around the extent of the particle butt
         buf  = 3
-        # Find extent of particle cloud in terms of indices
+        # Find extent of particle butt in terms of indices
         imax = np.searchsorted(self.dataset.X, np.amax(X[0,:])) + buf
         imin = np.searchsorted(self.dataset.X, np.amin(X[0,:])) - buf
         jmax = np.searchsorted(self.dataset.Y, np.amax(X[1,:])) + buf
@@ -102,10 +102,11 @@ def randomX0Array(lowendY,highendY,lowendX,highendX,numberOfParticles):
         finalArray.append(random.randint(lowendX,highendX))
     return finalArray
 def task2a():
-    numberOfParticles = 100
-    initArray=randomX0Array(-3.01e6,-3e6,-1.35e6,-1.2e6,numberOfParticles)
+    numberOfParticles = 10000
+    initArray=randomX0Array(-1.21e6,-1.19e6,-3.01e6,-2.99e6,numberOfParticles)
+    print(len(initArray))
     #print("initArray",initArray)
-    uglyArray=[-3e6, -3e6, -1.2e6, -1.3e6]
+    #uglyArray=[-3e6, -3e6, -1.2e6, -1.3e6]
     X0 = np.array(initArray).reshape(2, numberOfParticles)  # reshape (2,Np)
     #Funker ikke med alt for store verdier
     #print("X0: \n", X0)
@@ -150,28 +151,28 @@ def task2a():
     plt.show()
 
 def task3a():
-    numberOfParticles = 100
-    initArray=randomX0Array(-3.01e6,-3e6,-1.35e6,-1.2e6,numberOfParticles)
+    numberOfParticles = 10000
+    #initArray=randomX0Array(-3.01e6,-3e6,-1.35e6,-1.2e6,numberOfParticles)
+    initArray1=np.array(np.random.random_integers(-3.01e6,-3e6,numberOfParticles))
+    initArray2=np.array(np.random.random_integers(-1.35e6,-1.2e6,numberOfParticles))
+    print("tid brukt",time.time()-startTime)
+    initArray=np.concatenate((initArray1,initArray2))
+    print("tid brukt",time.time()-startTime)
+    print(len(initArray))
     #print("initArray",initArray)
-    uglyArray=[-3e6, -3e6, -1.2e6, -1.3e6]
     X0 = np.array(initArray).reshape(2, numberOfParticles)  # reshape (2,Np)
     #Funker ikke med alt for store verdier
     #print("X0: \n", X0)
     t0 = np.datetime64('2017-02-01T12:00:00')
     tEnd = np.datetime64('2017-02-11T12:00:00')
     h = np.timedelta64(3600, 's')
+    print("tid brukt",time.time()-startTime)
     trajectories = particleTrajectory(X0, tEnd, h, t0, Vwater, ETMforEq2)
     trajectories = np.hsplit(trajectories, len(trajectories[0])) #Splitter i x og y
+    print("tid brukt",time.time()-startTime)
     xArray = trajectories[0]
     yArray = trajectories[1]
-
-    # xArrayParticleSplit = np.array([ [xArray[i][0][0] for i in range(len(xArray))] ])
-    # yArrayParticleSplit = np.array([ [yArray[i][0][0] for i in range(len(yArray))] ])
-    # print("xArrayParticleSplit\n", xArrayParticleSplit[0][:5]) #Denne funker fint
-    # for particle in range(1,numberOfParticles): #Append smeller alt i samme brackets. Prøver vstack
-    #     xArrayParticleSplit = np.vstack((xArrayParticleSplit, np.array([ [xArray[i][0][particle] for i in range(len(xArray))] ])))
-    #     yArrayParticleSplit = np.vstack((yArrayParticleSplit, np.array([ [yArray[i][0][particle] for i in range(len(yArray))] ])))
-    # plt.figure()
+    print("tid brukt",time.time()-startTime)
     ax = plt.axes(projection=ccrs.NorthPolarStereo())
     land_10m = cfeature.NaturalEarthFeature('physical','land','10m',color='#00aa00')
     ax.add_feature(land_10m)
@@ -182,6 +183,7 @@ def task3a():
     plt.title("Partikkelens bane")
     colors=["r.","b.","g.","c.","k.","y."]
     for index in range(0,6): #endret fra len(xArrayParticleSplit)
+        print("tid brukt",time.time()-startTime)
         #plt.figure(index)
         #ax = plt.axes(projection=ccrs.NorthPolarStereo())
         #land_10m = cfeature.NaturalEarthFeature('physical','land','10m',color='#00aa00')
@@ -190,11 +192,16 @@ def task3a():
         #ax.set_extent((-4, 15, 57, 67))
         lons, lats = pyproj.transform(p1, p2, xArray[index*2*24], yArray[index*2*24])
         ax.plot(lons, lats,colors[index], transform=ccrs.PlateCarree(), zorder=2)
+        #plt.savefig("3a"+str(index)+".pdf")
         #plt.plot(xArrayParticleSplit[index], yArrayParticleSplit[index])
+    ax.legend(handles=[xArray,yArray],bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
+    plt.savefig("totalfigur3a.pdf")
     print("Viser plott nå")
     endTime=time.time()
     print("tid brukt",endTime-startTime)
+    #ax.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
     plt.show()
+    ax.show()
 
 #task2a()
 task3a()
