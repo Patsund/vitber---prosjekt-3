@@ -34,6 +34,7 @@ def ETMforEq2(X,t,h,slopeFunction):
     #print("Xfinal",Xfinal)
     return Xfinal
 
+
 def genLogSpace( array_size, num ):
     lspace = np.around(np.logspace(1,np.log10(array_size),num)).astype(np.uint64)
     return np.array(sorted(set(lspace.tolist())))-1
@@ -58,7 +59,7 @@ def errorForEuler(X,h,figname):
     yList.append(Y[1])
     timeFinal=2*24*60*60
     timeNow=0
-    for i in range(int(2*24*60*60/h)):
+    for i in range(int(2*24*60*60/h)+1):
         h=min(h,timeFinal-timeNow)
         timeNow+=h
         Y=eulerForEq2(Y,h)
