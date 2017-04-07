@@ -53,7 +53,7 @@ class Interpolator():
         dy = fv(X[0,:], X[1,:], grid = False)
         return np.array([dx, dy])
 
-datapath = 'C:/Users/Even/Downloads/Norkyst-800m.nc'
+datapath = 'C:/Users/Patrik/Downloads/Norkyst-800m.nc'
 d  = xr.open_dataset(datapath)
 f  = Interpolator(dataset = d)
 t = np.datetime64('2017-02-01T12:00:00')
@@ -199,7 +199,6 @@ def task3b_new():
     x = -3010000 + 800 * np.arange(Nx)
     y = -1300000 + 800 * np.arange(Ny)
     x, y = np.meshgrid(x, y)
-    fig = plt.figure(figsize=(12, 8))
     ax = plt.axes(projection=ccrs.NorthPolarStereo())
     land_10m = cfeature.NaturalEarthFeature('physical', 'land', '10m', color='#dddddd')
     ax.add_feature(land_10m)
@@ -210,31 +209,47 @@ def task3b_new():
     #print(lons)
     #print(lats)
     numberOfParticles=100000
-    X0 = randomX0Array(-3.11e6, -3.1e6, -1.31e6, -1.3e6, numberOfParticles).reshape(2, numberOfParticles)
-    print("laget X0")
+    X0 = randomX0Array(-3.01e6, -2.99e6, -1.21e6, -1.19e6, numberOfParticles).reshape(2, numberOfParticles)
+    print("laget X0",time.time()-startTime)
     t0 = np.datetime64('2017-02-01T12:00:00')
     tEnd = np.datetime64('2017-02-11T12:00:00')
     h = np.timedelta64(3600, 's')
     trajectories = particleTrajectory(X0, tEnd, h, t0, Vwater, ETMforEq2)
-    print("trajectories er fiksa")
+    print("trajectories er fiksa",time.time()-startTime)
     xArray = trajectories[:, 0, :]
     yArray = trajectories[:, 1, :]
     dataGrid_X = d.X.values
     dataGrid_Y = d.Y.values
+    ax.set_extent((0, 7, 58, 64))
     colormap = ['Reds', 'Oranges', 'Greens', 'Blues', 'Purples', 'PuRd'] #['autumn', 'cool', 'copper' , 'summer', 'winter', 'autumn']
     for day in range(0, 6):
-        print("dag", 2*day)
-        plt.figure(day)
+        print("dag", 2*day,time.time()-startTime)
+        plt.figure(day+1)#,figsize=(12,8))
+        x = -3010000 + 800 * np.arange(Nx)
+        y = -1300000 + 800 * np.arange(Ny)
+        x, y = np.meshgrid(x, y)
+        ax = plt.axes(projection=ccrs.NorthPolarStereo())
+        land_10m = cfeature.NaturalEarthFeature('physical', 'land', '10m', color='#dddddd')
+        ax.add_feature(land_10m)
+        ax.coastlines(resolution='10m')
+        ax.set_extent((0, 6, 58.5, 62.5))
+        p1 = pyproj.Proj(d.projection_stere.proj4)
+        p2 = pyproj.Proj(proj='latlong')
+        print("ligger problemet her?", time.time()-startTime)
         concentration, coordinates_X, coordinates_Y = np.histogram2d(xArray[day*2*24], yArray[day*2*24], bins=(dataGrid_X, dataGrid_Y))
         concentration = np.ma.masked_array(concentration, mask=concentration == 0)
+        print("concentration fiksa",time.time()-startTime)
         coordinates_X, coordinates_Y = np.meshgrid(coordinates_X, coordinates_Y)
+        print("meshgridda",time.time()-startTime)
         lons, lats = pyproj.transform(p1, p2, coordinates_X, coordinates_Y)
+        print("lons og latsa",time.time()-startTime)
         ax.pcolormesh(lons, lats, concentration.T, transform=ccrs.PlateCarree(), zorder=2, cmap='gist_heat_r')
-        plt.savefig("oppgave3b"+str(2*day)+"pdf")
-    ax.set_extent((0, 7, 58, 64))
+        print("går inn for å save",time.time()-startTime)
+        plt.savefig("oppgave3b"+str(2*day)+".png")
+        print("savet",time.time()-startTime)
     #print("begynner å save")
     #plt.savefig("figurgitter.pdf")
-    print("ferdig")
+    print("ferdig",time.time()-startTime)
     plt.show()
 
 startTime=time.time()

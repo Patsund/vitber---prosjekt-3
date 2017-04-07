@@ -182,7 +182,7 @@ def task3a():
     p1 = pyproj.Proj(d.projection_stere.proj4)
     p2 = pyproj.Proj(proj='latlong')
     plt.title("Partikkelens bane")
-    colors=["r.","b.","g.","c.","k.","y."]
+    colors=["r,","b,","g,","c,","k,","y,"]
     for index in range(0,6): #endret fra len(xArrayParticleSplit)
         print("tid brukt",time.time()-startTime)
         #plt.figure(index)
@@ -192,10 +192,10 @@ def task3a():
         #ax.coastlines(resolution='10m')
         #ax.set_extent((-4, 15, 57, 67))
         lons, lats = pyproj.transform(p1, p2, xArray[index*2*24], yArray[index*2*24])
-        ax.plot(lons, lats,colors[index], transform=ccrs.PlateCarree(), zorder=2)
+        ax.plot(lons, lats, colors[index],label="dag"+str(2*index), transform=ccrs.PlateCarree(), zorder=2)
         #plt.savefig("3a"+str(index)+".pdf")
         #plt.plot(xArrayParticleSplit[index], yArrayParticleSplit[index])
-    #ax.legend(handles=[xArray,yArray],bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
+    ax.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
     plt.savefig("totalfigur3a.pdf")
     print("Viser plott nå")
     endTime=time.time()
@@ -262,7 +262,7 @@ def task3b():
 
 #task2a()
 task3a()
-task3b()
+#task3b()
 ########################################
 #### Plotting trajectories on a map ####
 ########################################
