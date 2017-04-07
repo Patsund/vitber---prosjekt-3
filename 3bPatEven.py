@@ -221,14 +221,16 @@ def task3b_new():
     yArray = trajectories[:, 1, :]
     dataGrid_X = d.X.values
     dataGrid_Y = d.Y.values
-    colormap = ['autumn', 'cool', 'copper' , 'summer', 'winter', 'autumn'] #['Reds', 'Oranges', 'Greens', 'Blues', 'Purples', 'PuRd']
+    colormap = ['Reds', 'Oranges', 'Greens', 'Blues', 'Purples', 'PuRd'] #['autumn', 'cool', 'copper' , 'summer', 'winter', 'autumn']
     for day in range(0, 6):
         print("dag", 2*day)
+        plt.figure(day)
         concentration, coordinates_X, coordinates_Y = np.histogram2d(xArray[day*2*24], yArray[day*2*24], bins=(dataGrid_X, dataGrid_Y))
         concentration = np.ma.masked_array(concentration, mask=concentration == 0)
         coordinates_X, coordinates_Y = np.meshgrid(coordinates_X, coordinates_Y)
         lons, lats = pyproj.transform(p1, p2, coordinates_X, coordinates_Y)
-        ax.pcolormesh(lons, lats, concentration.T, transform=ccrs.PlateCarree(), zorder=2, cmap=colormap[day])
+        ax.pcolormesh(lons, lats, concentration.T, transform=ccrs.PlateCarree(), zorder=2, cmap='gist_heat_r')
+        plt.savefig("oppgave3b"+str(2*day)+"pdf")
     ax.set_extent((0, 7, 58, 64))
     #print("begynner å save")
     #plt.savefig("figurgitter.pdf")
