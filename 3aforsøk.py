@@ -165,6 +165,7 @@ def task3a():
     t0 = np.datetime64('2017-02-01T12:00:00')
     tEnd = np.datetime64('2017-02-11T12:00:00')
     h = np.timedelta64(3600, 's')
+    print("start",X)
     trajectories = particleTrajectory(X0, tEnd, h, t0, Vwater, ETMforEq2)
     trajectories = np.hsplit(trajectories, len(trajectories[0])) #Splitter i x og y
     xArray = trajectories[0]
