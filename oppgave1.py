@@ -273,7 +273,7 @@ def task1c():
 def task1d():
     L = 1.0E+02
     timeNow = 0
-    totalTime = 96* 3600
+    totalTime = 48* 3600
     deviationLimit = 0.1
     # X = [x, y, dx, dy]
     X = np.array([L, 0, 0, 0])
@@ -296,13 +296,12 @@ def task1d():
                 Xtrap = rk2(X, fForEq1, h, timeNow)
                 thisDeviation = np.linalg.norm(Xtrap[:2] - Xeul)
             print("h initialized to",h,"seconds")
-        #h = min(h, totalTime - timeNow)
+        h = min(h, totalTime - timeNow)
         Xeul = eulerForEq1(X[:2], timeNow, Vwater, X[1:], h)
         Xtrap = rk2(X, fForEq1, h, timeNow)
         thisDeviation = np.linalg.norm(Xtrap[:2] - Xeul)
         while (thisDeviation > deviationLimit):
             h = h/2
-            #h = min(h, totalTime - timeNow)
             Xeul = eulerForEq1(X[:2], timeNow, Vwater, X[2:], h)
             Xtrap = rk2(X,fForEq1,h,timeNow)
             thisDeviation = np.linalg.norm(Xtrap[:2] - Xeul)
@@ -311,10 +310,8 @@ def task1d():
         timeNow += h
         if (thisDeviation < deviationLimit/10):
             h *= 2
-            #h = min(h, totalTime - timeNow)
         coordinateArray.append(Xtrap)
         X = Xtrap
-    print(timeNow)
     xValueArray = [k[0] for k in coordinateArray]
     yValueArray = [k[1] for k in coordinateArray]
     timeStepArray_xValues = [k[0] for k in timeStepArray]
