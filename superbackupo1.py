@@ -1,6 +1,5 @@
 import numpy as np
 from matplotlib import pyplot as plt
-import time
 
 alpha = 5e-5
 m = 1e-2
@@ -12,7 +11,7 @@ def Vwater(t,X):
     return newX
 
 def eulerForEq1(X,t,Vwater,Xdot,h):
-    x,y=X[0],X[1]x
+    x,y=X[0],X[1]
     VwaterVector=Vwater(t,X)
     x+=h*Xdot[0]
     y+=h*Xdot[1]
@@ -23,8 +22,9 @@ def eulerForEq1(X,t,Vwater,Xdot,h):
     newXdot=[dx,dy]
     return newX,newXdot
 
-def eulerForEq2(X,Xdot,h):
-    x, y=X[0], X[1]
+def eulerForEq2(X,Vwater,Xdot,h):
+    x=X[0]
+    y=X[1]
     newX=[x,y]#ny matrise for å ikke endre den gamle
     T=24*60*60
     factor=2*np.pi/T
@@ -87,7 +87,7 @@ def errorAndTrajectoryForRK2(X,h,figname):
     error=np.sqrt(vecError[0]**2+vecError[1]**2)
     return error
 
-
+X=[]
 def errorAndTrajectoryForEuler(X,h,figname):
     x,y=X[0],X[1]
     xList,yList=[],[]
@@ -138,7 +138,7 @@ def analyticSolution(L,alpha,m):
     #print("Analytic position after 48 hours = ", X[0].real, X[1].real)
     return X
 
-def task1a(savefig=False):
+def task1a(bool=False):
     X=[100,0]
     h0=60*60 #sekund
     thiserror = errorAndTrajectoryForEuler(X,h0,"errorOnly")
@@ -147,7 +147,7 @@ def task1a(savefig=False):
         thiserror = errorAndTrajectoryForEuler(X,h0,"errorOnly")
     timestepEuler=h0
     print("tidssteget som kreves for å få en global feil mindre enn 10 m er h =",timestepEuler)
-    if savefig:
+    if bool:
         X=[100,0]
         h=100
         errorAndTrajectoryForEuler(X,h,"1ahlik100.pdf")
@@ -176,7 +176,7 @@ def task1a(savefig=False):
         plt.axvline(x=timestepEuler)
         plt.show()
 
-def task1b(savefig=False):
+def task1b(bool=False):
     X=[100,0]
     h0=60*60 #sekund
     thiserror = errorAndTrajectoryForEuler(X,h0,"errorOnly")
@@ -191,7 +191,7 @@ def task1b(savefig=False):
         thiserror = errorAndTrajectoryForRK2(X,h0,"errorOnly")
     timestepTrap=h0
     print("tidssteget som kreves for å få en global feil mindre enn 10 m med trapesmetoden er h =",timestepTrap)
-    if savefig:
+    if bool:
         X=[100,0]
         h=100
         errorAndTrajectoryForRK2(X,h,"1ahlik100.pdf")
@@ -202,8 +202,8 @@ def task1b(savefig=False):
             X=[100,0]
             errorArr1.append(errorAndTrajectoryForRK2(X,h,"errorOnly"))
             errorArr2.append(errorAndTrajectoryForEuler(X,h,"errorOnly"))
-        plt.figure("1berror")
-        plt.title("Error for Euler and trapezoid with biggest error smaller than 10 marked with a line")
+        plt.figure("1aerror")
+        plt.title("Error for Euler and trapezoid with ")
         plt.loglog(times,errorArr1,"bo",label="Trapezoid")
         plt.loglog(times,errorArr2,"ro",label="Euler")
         plt.axvline(x=timestepEuler, color="r")
@@ -221,33 +221,20 @@ def task1b(savefig=False):
             X=[100,0]
             errorArr1.append(errorAndTrajectoryForRK2(X,h,"errorOnly"))
             errorArr2.append(errorAndTrajectoryForEuler(X,h,"errorOnly"))
-        plt.figure("1berror")
-        plt.title("Error for Euler and trapezoid with biggest error smaller than 10 marked with a line")
-        plt.loglog(times,errorArr1,"bo",label="Trapezoid")
-        plt.loglog(times,errorArr2,"ro",label="Euler")
-        plt.axvline(x=timestepEuler, color="r")
-        plt.axvline(x=timestepTrap, color="b")
+        plt.figure("1aerror")
+        plt.title("Error for Euler and Trapezoid")
+        plt.loglog(times,errorArr2,"ro",label="Trapezoid")
+        plt.loglog(times,errorArr1,"bo",label="Euler")
+        plt.axvline(x=timestepEuler, color=)
         plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
         plt.show()
-    X=(100,0)
-    n=10
-    endTimeEuler,endTimeRK2=0,0
-    for i in range(n):
-        startTimeEuler=time.time()
-        errorEuler=errorAndTrajectoryForEuler(X,timestepEuler,"errorOnly")
-        endTimeEuler+=time.time()-startTimeEuler
-        startTimeRK2=time.time()
-        errorETM=errorAndTrajectoryForRK2(X,timestepTrap,"errorOnly")
-        endTimeRK2+=time.time()-startTimeRK2
-    endTimeEuler/=n
-    endTimeRK2/=n
-    print("Euler bruker",endTimeEuler,"sekunder med error < 10 m. Trapesmetoden bruker",endTimeRK2,"sekunder med error < 10 m")
 
 def task1c():
     ##Constants
     L = 1.0E+02
     alpha = 5e-5
     m = 1e-2
+
     numberOfTimesteps = 10
     analyticEndpoint = np.array(analyticSolution(L, alpha, m))
     print("Analytisk ende", analyticEndpoint)
@@ -354,8 +341,7 @@ def task1d():
     plt.plot(xValueArray, yValueArray, 'ro', markersize=0.4)
     print("Final error:", np.linalg.norm(X - analyticEndpoint))
     plt.show()
-def oppgave1():
-    task1a()
-    task1b()
-    task1c()
-    task1d()
+
+
+#task1b()
+task1c()

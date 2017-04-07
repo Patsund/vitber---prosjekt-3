@@ -153,8 +153,8 @@ def task2a():
 def task3a():
     numberOfParticles = 10000
     #initArray=randomX0Array(-3.01e6,-3e6,-1.35e6,-1.2e6,numberOfParticles)
-    initArray1=np.array(np.random.random_integers(-3.01e6,-3e6,numberOfParticles))
-    initArray2=np.array(np.random.random_integers(-1.35e6,-1.2e6,numberOfParticles))
+    initArray1=np.array(np.random.random_integers(-3.01e6,-2.99e6,numberOfParticles))
+    initArray2=np.array(np.random.random_integers(-1.21e6,-1.19e6,numberOfParticles))
     print("tid brukt",time.time()-startTime)
     initArray=np.concatenate((initArray1,initArray2))
     print("tid brukt",time.time()-startTime)
@@ -178,11 +178,11 @@ def task3a():
     land_10m = cfeature.NaturalEarthFeature('physical','land','10m',color='#00aa00')
     ax.add_feature(land_10m)
     ax.coastlines(resolution='10m')
-    ax.set_extent((-4, 15, 57, 67))
+    ax.set_extent((0, 6, 58.5, 62.5))
     p1 = pyproj.Proj(d.projection_stere.proj4)
     p2 = pyproj.Proj(proj='latlong')
     plt.title("Partikkelens bane")
-    colors=["r,","b,","g,","c,","k,","y,"]
+    colors=["r.","b.","g.","c.","k.","y."]
     for index in range(0,6): #endret fra len(xArrayParticleSplit)
         print("tid brukt",time.time()-startTime)
         #plt.figure(index)
@@ -195,7 +195,9 @@ def task3a():
         ax.plot(lons, lats, colors[index],label="dag"+str(2*index), transform=ccrs.PlateCarree(), zorder=2)
         #plt.savefig("3a"+str(index)+".pdf")
         #plt.plot(xArrayParticleSplit[index], yArrayParticleSplit[index])
-    ax.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
+    #ax.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
+    plt.savefig("totalfigur3apic.png")
+    print("ferdig med bilde")
     plt.savefig("totalfigur3a.pdf")
     print("Viser plott nå")
     endTime=time.time()
