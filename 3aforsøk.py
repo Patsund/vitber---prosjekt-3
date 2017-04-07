@@ -1,6 +1,7 @@
 import math
 import numpy as np
 from matplotlib import pyplot as plt
+import matplotlib.patches as mpatches
 import xarray as xr
 from scipy.interpolate import RectBivariateSpline
 import cartopy
@@ -88,8 +89,8 @@ def particleTrajectory(X0, time_final, h, time_initial, velocityField, integrato
     X[0, :] = X0
     time_now = time_initial
     for step in range(numberOfTimeSteps):  # Tok bort +1 pga hele timer
-        time_now += h  # numpy håndterer time64-opplegg
         X[step + 1, :] = integrator(X[step, :], time_now, h, velocityField)
+        time_now += h  # numpy håndterer time64-opplegg
         # Denne bør virkelig returnere koordinater på formen (2,1) - og det gjør den
     return X
 
@@ -155,9 +156,7 @@ def task3a():
     #initArray=randomX0Array(-3.01e6,-3e6,-1.35e6,-1.2e6,numberOfParticles)
     initArray1=np.array(np.random.random_integers(-3.01e6,-2.99e6,numberOfParticles))
     initArray2=np.array(np.random.random_integers(-1.21e6,-1.19e6,numberOfParticles))
-    print("tid brukt",time.time()-startTime)
     initArray=np.concatenate((initArray1,initArray2))
-    print("tid brukt",time.time()-startTime)
     print(len(initArray))
     #print("initArray",initArray)
     X0 = np.array(initArray).reshape(2, numberOfParticles)  # reshape (2,Np)
@@ -166,13 +165,10 @@ def task3a():
     t0 = np.datetime64('2017-02-01T12:00:00')
     tEnd = np.datetime64('2017-02-11T12:00:00')
     h = np.timedelta64(3600, 's')
-    print("tid brukt",time.time()-startTime)
     trajectories = particleTrajectory(X0, tEnd, h, t0, Vwater, ETMforEq2)
     trajectories = np.hsplit(trajectories, len(trajectories[0])) #Splitter i x og y
-    print("tid brukt",time.time()-startTime)
     xArray = trajectories[0]
     yArray = trajectories[1]
-    print("tid brukt",time.time()-startTime)
     plt.figure(1)
     ax = plt.axes(projection=ccrs.NorthPolarStereo())
     land_10m = cfeature.NaturalEarthFeature('physical','land','10m',color='#00aa00')
@@ -184,7 +180,6 @@ def task3a():
     plt.title("Partikkelens bane")
     colors=["r.","b.","g.","c.","k.","y."]
     for index in range(0,6): #endret fra len(xArrayParticleSplit)
-        print("tid brukt",time.time()-startTime)
         #plt.figure(index)
         #ax = plt.axes(projection=ccrs.NorthPolarStereo())
         #land_10m = cfeature.NaturalEarthFeature('physical','land','10m',color='#00aa00')
@@ -192,10 +187,18 @@ def task3a():
         #ax.coastlines(resolution='10m')
         #ax.set_extent((-4, 15, 57, 67))
         lons, lats = pyproj.transform(p1, p2, xArray[index*2*24], yArray[index*2*24])
-        ax.plot(lons, lats, colors[index],label="dag"+str(2*index), transform=ccrs.PlateCarree(), zorder=2)
+        ax.plot(lons, lats, colors[index], transform=ccrs.PlateCarree(), zorder=2)
         #plt.savefig("3a"+str(index)+".pdf")
         #plt.plot(xArrayParticleSplit[index], yArrayParticleSplit[index])
-    #ax.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
+    day0 = mpatches.Patch(color='b', label='Day 0')
+    day2 = mpatches.Patch(color='g', label='Day 2')
+    day4 = mpatches.Patch(color='m', label='Day 4')
+    day6 = mpatches.Patch(color='k', label='Day 6')
+    day8 = mpatches.Patch(color='c', label='Day 8')
+    day10 = mpatches.Patch(color='r', label='Day 10')
+    print("før plt.show er tiden brukt",time.time()-startTime)
+    ax.legend(handles=[day0,day2,day4,day6,day8,day10], loc = "best")
+    plt.show()
     plt.savefig("totalfigur3apic.png")
     print("ferdig med bilde")
     plt.savefig("totalfigur3a.pdf")
