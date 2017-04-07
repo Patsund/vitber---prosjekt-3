@@ -104,7 +104,7 @@ def randomX0Array(lowendY,highendY,lowendX,highendX,numberOfParticles):
     return finalArray
 def task2a():
     numberOfParticles = 1
-    initArray=randomX0Array(-1.21e6,-1.19e6,-3.01e6,-2.99e6,numberOfParticles)
+    #fiks partikkelposisjon! :)
     print(len(initArray))
     X0 = np.array(initArray).reshape(2, numberOfParticles)  # reshape (2,Np)
     t0 = np.datetime64('2017-02-01T12:00:00')

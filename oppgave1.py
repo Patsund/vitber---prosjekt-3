@@ -273,7 +273,7 @@ def task1d():
     L = 1.0E+02
     timeNow = 0
     totalTime = 48* 3600
-    deviationLimit = 1
+    deviationLimit = 0.1
     # X = [x, y, dx, dy]
     X = np.array([L, 0, 0, 0])
     #Vi ønsker å logge både tidssteg, avvik for steg som godkjennes samt coordinater
@@ -297,11 +297,11 @@ def task1d():
                 thisDeviation = np.linalg.norm(Xtrap[:2] - Xeul)
             print("h initialized to",h,"seconds")
         h = min(h, totalTime - timeNow)
-        Xeul = eulerForEq1(X[:2], timeNow, Vwater, X[1:], h)
+        Xeul = eulerForEq1(X[:2], timeNow, Vwater, X[2:], h)
         Xtrap = rk2(X, fForEq1, h, timeNow)
         thisDeviation = np.linalg.norm(Xtrap[:2] - Xeul)
         while (thisDeviation > deviationLimit):
-            p=True
+            #p=True
             print("Avviket er ",thisDeviation,"med h =",h,"tid igjen er ",totalTime-timeNow)
             h = h/2
             Xeul = eulerForEq1(X[:2], timeNow, Vwater, X[2:], h)
@@ -336,6 +336,7 @@ def task1d():
     plt.plot(xValueArray, yValueArray, 'ro', markersize=0.4)
     print("Final error:", np.linalg.norm(X[:2] - analyticEndpoint))
     plt.show()
+
 
 def oppgave1():
     task1a()
