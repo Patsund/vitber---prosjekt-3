@@ -1,6 +1,6 @@
 import oppgave1 as o1
 import oppgave2 as o2
-import oppgave3 as o3
+import Oppgave3 as o3
 
 def printOptions():
 	outStr = "\n1) Oppgave 1"
@@ -20,8 +20,13 @@ if __name__ == "__main__":
 		except:
 			pass
 		if switch == 1:
-			o1.oppgave1()
-
+			if save == 2:
+				o1.oppgave1()
+			elif save == 3:
+				o1.oppgave1(True)
+			else:
+				print("Du oppga ikke en gyldig verdi for å lagre/vise figurer")
+				pass
 		elif switch == 2:
 			o2.oppgave2()
 		elif switch == 3:
