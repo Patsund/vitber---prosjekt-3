@@ -35,8 +35,7 @@ def fForEq2(X,t):
     return dX
 
 def fForEq1(X,t):
-    positions=[X[0],X[1]]
-    Vw=Vwater(t,positions)
+    Vw=Vwater(t,[X[0],X[1]])
     dx=X[2]
     dy=X[3]
     dvx=alpha/m*(Vw[0]-X[2])
