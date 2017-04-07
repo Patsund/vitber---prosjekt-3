@@ -1,0 +1,19 @@
+Tripadvisor's top ten things to do and graphs to plot in Trondheim, Norway
+
+1a
+Plot partikkelens bane med ok h
+Plot error som funksjon av minst 10 h-verdier, loglog
+
+1b
+Plot partikkelens bane med ok h
+Plot (log-log) final global error for each h (10+)
+
+1c
+Plot final global error for each h
+Plot trajectory for adequate h
+
+1d
+Plot partikkelens bane med ok h
+Plot development of timestep over time
+
+2a
