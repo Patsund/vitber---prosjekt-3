@@ -58,11 +58,12 @@ def errorAndTrajectoryForRK2(X,h,figname):
     yList.append(newX[1])
     for i in range(n+1):
         h=min(h,timeFinal-timeNow)
-        newX=rk2(newX,Vwater,fForEq2,h,timeNow)
+        newX=rk2(newX,fForEq2,h,timeNow)
         xList.append(newX[0])
         yList.append(newX[1])
         timeNow+=h
-    X=np.array([])
+    X=np.array(X)
+    newX=np.array(newX)
     vecError=X-newX
     if figname=="dummy":
         X=[]
@@ -166,7 +167,7 @@ def task1a(savefig=False):
         plt.title("Error for Euler")
         plt.loglog(times,errorArr,"ro")
         plt.axvline(x=timestepEuler)
-        plt.show()
+        #plt.show()
 
 def task1b(savefig=False):
     X=[100,0]
@@ -220,7 +221,7 @@ def task1b(savefig=False):
         plt.axvline(x=timestepEuler, color="r")
         plt.axvline(x=timestepTrap, color="b")
         plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
-        plt.show()
+        #plt.show()
     X=(100,0)
     n=10
     endTimeEuler,endTimeRK2=0,0
@@ -301,7 +302,7 @@ def task1c(savefig=False):
         plt.xlabel("timestep / sekunder")
         plt.ylabel("error / meter")
         plt.title("Avvik fra analytisk løsning")
-        plt.show()
+        #plt.show()
 
 def task1d(savefig=False):
     if savefig:
@@ -438,7 +439,7 @@ def task1d(savefig=False):
         plt.title("Bane med variabelt tidssteg")
         plt.plot(xValueArray, yValueArray, 'ro', markersize=0.4)
         print("Final error:", np.linalg.norm(X[:2] - analyticEndpoint))
-        plt.show()
+        #plt.show()
 
 
 def oppgave1(saving=False):
@@ -452,3 +453,6 @@ def oppgave1(saving=False):
         task1b()
         task1c()
         task1d()
+        plt.show()
+
+oppgave1()

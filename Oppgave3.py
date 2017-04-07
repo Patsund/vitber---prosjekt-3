@@ -148,7 +148,7 @@ def task2a():
     print("Viser plott nå")
     endTime=time.time()
     print("tid brukt",endTime-startTime)
-    plt.show()
+    #plt.show()
 
 def task3a(separate=False, savefig=False):
     if savefig:
@@ -163,7 +163,7 @@ def task3a(separate=False, savefig=False):
             trajectories = np.hsplit(trajectories, len(trajectories[0]))
             xArray = trajectories[0]
             yArray = trajectories[1]
-            plt.figure(1)
+            plt.figure()
             ax = plt.axes(projection=ccrs.NorthPolarStereo())
             land_10m = cfeature.NaturalEarthFeature('physical','land','10m',color='#00aa00')
             ax.add_feature(land_10m)
@@ -174,7 +174,7 @@ def task3a(separate=False, savefig=False):
             plt.title("Partikkelens bane")
             colors=["r.","b.","g.","c.","k.","y."]
             for index in range(0,6): #endret fra len(xArrayParticleSplit)
-                plt.figure(index)
+                plt.figure("3a dag"+str(index*2))
                 ax = plt.axes(projection=ccrs.NorthPolarStereo())
                 land_10m = cfeature.NaturalEarthFeature('physical','land','10m',color='#00aa00')
                 ax.add_feature(land_10m)
@@ -186,7 +186,7 @@ def task3a(separate=False, savefig=False):
                 figTime=time.time()
                 plt.savefig("3apdfer\q3adag"+str(index*2)+"plot.pdf")
                 print("figure saved, spent",time.time()-figTime,"seconds saving")
-            plt.show()
+            #plt.show()
         else:
             numberOfParticles = 10000
             initArray=randomX0Array(-3.01e6,-2.99e6,-1.21e6,-1.19e6,numberOfParticles)
@@ -198,7 +198,7 @@ def task3a(separate=False, savefig=False):
             trajectories = np.hsplit(trajectories, len(trajectories[0]))
             xArray = trajectories[0]
             yArray = trajectories[1]
-            plt.figure(1)
+            plt.figure()
             ax = plt.axes(projection=ccrs.NorthPolarStereo())
             land_10m = cfeature.NaturalEarthFeature('physical','land','10m',color='#00aa00')
             ax.add_feature(land_10m)
@@ -211,12 +211,12 @@ def task3a(separate=False, savefig=False):
             for index in range(0,6):
                 lons, lats = pyproj.transform(p1, p2, xArray[index*2*24], yArray[index*2*24])
                 ax.plot(lons, lats, colors[index], transform=ccrs.PlateCarree(), zorder=2)
-            day0 = mpatches.Patch(color='b', label='Day 0')
-            day2 = mpatches.Patch(color='g', label='Day 2')
-            day4 = mpatches.Patch(color='m', label='Day 4')
-            day6 = mpatches.Patch(color='k', label='Day 6')
-            day8 = mpatches.Patch(color='c', label='Day 8')
-            day10 = mpatches.Patch(color='r', label='Day 10')
+            day0 = mpatches.Patch(color='r', label='Day 0')
+            day2 = mpatches.Patch(color='b', label='Day 2')
+            day4 = mpatches.Patch(color='g', label='Day 4')
+            day6 = mpatches.Patch(color='c', label='Day 6')
+            day8 = mpatches.Patch(color='k', label='Day 8')
+            day10 = mpatches.Patch(color='y', label='Day 10')
             ax.legend(handles=[day0,day2,day4,day6,day8,day10],bbox_to_anchor=(1.05,1), loc = 2, borderaxespad=0.)
             print("saving image")
             imgTime=time.time()
@@ -238,7 +238,7 @@ def task3a(separate=False, savefig=False):
             trajectories = np.hsplit(trajectories, len(trajectories[0]))
             xArray = trajectories[0]
             yArray = trajectories[1]
-            plt.figure(1)
+            plt.figure()
             ax = plt.axes(projection=ccrs.NorthPolarStereo())
             land_10m = cfeature.NaturalEarthFeature('physical','land','10m',color='#00aa00')
             ax.add_feature(land_10m)
@@ -249,7 +249,7 @@ def task3a(separate=False, savefig=False):
             plt.title("Partikkelens bane")
             colors=["r.","b.","g.","c.","k.","y."]
             for index in range(0,6): #endret fra len(xArrayParticleSplit)
-                plt.figure(index)
+                plt.figure("3a dag"+str(index*2))
                 ax = plt.axes(projection=ccrs.NorthPolarStereo())
                 land_10m = cfeature.NaturalEarthFeature('physical','land','10m',color='#00aa00')
                 ax.add_feature(land_10m)
@@ -257,7 +257,7 @@ def task3a(separate=False, savefig=False):
                 ax.set_extent((0, 6, 58.5, 62.5))
                 lons, lats = pyproj.transform(p1, p2, xArray[index*2*24], yArray[index*2*24])
                 ax.plot(lons, lats, colors[index], transform=ccrs.PlateCarree(), zorder=2)
-            plt.show()
+            #plt.show()
         else:
             numberOfParticles = 10000
             initArray=randomX0Array(-3.01e6,-2.99e6,-1.21e6,-1.19e6,numberOfParticles)
@@ -269,7 +269,7 @@ def task3a(separate=False, savefig=False):
             trajectories = np.hsplit(trajectories, len(trajectories[0]))
             xArray = trajectories[0]
             yArray = trajectories[1]
-            plt.figure(1)
+            plt.figure("3a samlet")
             ax = plt.axes(projection=ccrs.NorthPolarStereo())
             land_10m = cfeature.NaturalEarthFeature('physical','land','10m',color='#00aa00')
             ax.add_feature(land_10m)
@@ -282,14 +282,14 @@ def task3a(separate=False, savefig=False):
             for index in range(0,6):
                 lons, lats = pyproj.transform(p1, p2, xArray[index*2*24], yArray[index*2*24])
                 ax.plot(lons, lats, colors[index], transform=ccrs.PlateCarree(), zorder=2)
-            day0 = mpatches.Patch(color='b', label='Day 0')
-            day2 = mpatches.Patch(color='g', label='Day 2')
-            day4 = mpatches.Patch(color='m', label='Day 4')
-            day6 = mpatches.Patch(color='k', label='Day 6')
-            day8 = mpatches.Patch(color='c', label='Day 8')
-            day10 = mpatches.Patch(color='r', label='Day 10')
+            day0 = mpatches.Patch(color='r', label='Day 0')
+            day2 = mpatches.Patch(color='b', label='Day 2')
+            day4 = mpatches.Patch(color='g', label='Day 4')
+            day6 = mpatches.Patch(color='c', label='Day 6')
+            day8 = mpatches.Patch(color='k', label='Day 8')
+            day10 = mpatches.Patch(color='y', label='Day 10')
             ax.legend(handles=[day0,day2,day4,day6,day8,day10],bbox_to_anchor=(1.05,1), loc = 2, borderaxespad=0.)
-            plt.show()
+            #plt.show()
             #endTime=time.time()
 
 def frequencyCounter(X,Nx,Ny,numberOfParticles):
@@ -315,7 +315,7 @@ def task3b(savefig=False):
         p2 = pyproj.Proj(proj='latlong')
         lons, lats = pyproj.transform(p1, p2, x, y)
         numberOfParticles=100000
-        X0 = randomX0Array(-3.01e6, -2.99e6, -1.21e6, -1.19e6, numberOfParticles).reshape(2, numberOfParticles)
+        X0 = np.array(randomX0Array(-3.01e6, -2.99e6, -1.21e6, -1.19e6, numberOfParticles)).reshape(2, numberOfParticles)
         print("laget X0",time.time()-startTime)
         t0 = np.datetime64('2017-02-01T12:00:00')
         tEnd = np.datetime64('2017-02-11T12:00:00')
@@ -328,7 +328,7 @@ def task3b(savefig=False):
         ax.set_extent((0, 6, 58.5, 62.5))
         colormap = ['Reds', 'Oranges', 'Greens', 'Blues', 'Purples', 'PuRd'] #['autumn', 'cool', 'copper' , 'summer', 'winter', 'autumn']
         for day in range(0, 6):
-            plt.figure(day+1)
+            plt.figure("3b dag"+str(day*2))
             x = -3010000 + 800 * np.arange(Nx)
             y = -1300000 + 800 * np.arange(Ny)
             x, y = np.meshgrid(x, y)
@@ -348,7 +348,7 @@ def task3b(savefig=False):
             figTime=time.time()
             plt.savefig("3bpdfer\oppgave3b"+str(2*day)+".png")
             print("figure saved, spent",time.time()-figTime,"seconds saving")
-        plt.show()
+        #plt.show()
     else:
         Nx, Ny = 600, 300
         x = -3010000 + 800 * np.arange(Nx)
@@ -362,7 +362,7 @@ def task3b(savefig=False):
         p2 = pyproj.Proj(proj='latlong')
         lons, lats = pyproj.transform(p1, p2, x, y)
         numberOfParticles=100000
-        X0 = randomX0Array(-3.01e6, -2.99e6, -1.21e6, -1.19e6, numberOfParticles).reshape(2, numberOfParticles)
+        X0 = np.array(randomX0Array(-3.01e6, -2.99e6, -1.21e6, -1.19e6, numberOfParticles)).reshape(2, numberOfParticles)
         t0 = np.datetime64('2017-02-01T12:00:00')
         tEnd = np.datetime64('2017-02-11T12:00:00')
         h = np.timedelta64(3600, 's')
@@ -374,7 +374,7 @@ def task3b(savefig=False):
         ax.set_extent((0, 7, 58, 64))
         colormap = ['Reds', 'Oranges', 'Greens', 'Blues', 'Purples', 'PuRd'] #['autumn', 'cool', 'copper' , 'summer', 'winter', 'autumn']
         for day in range(0, 6):
-            plt.figure(day+1)
+            plt.figure("3b dag"+str(day*2))
             x = -3010000 + 800 * np.arange(Nx)
             y = -1300000 + 800 * np.arange(Ny)
             x, y = np.meshgrid(x, y)
@@ -390,7 +390,7 @@ def task3b(savefig=False):
             coordinates_X, coordinates_Y = np.meshgrid(coordinates_X, coordinates_Y)
             lons, lats = pyproj.transform(p1, p2, coordinates_X, coordinates_Y)
             ax.pcolormesh(lons, lats, concentration.T, transform=ccrs.PlateCarree(), zorder=2, cmap='gist_heat_r')
-        plt.show()
+        #plt.show()
 
 def oppgave3(saving=False):
     if saving:
@@ -400,3 +400,6 @@ def oppgave3(saving=False):
     else:
         task3a()
         task3b()
+        plt.show()
+
+oppgave3()
