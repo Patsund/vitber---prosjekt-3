@@ -1,27 +1,23 @@
 import math
 import numpy as np
 from matplotlib import pyplot as plt
-import matplotlib.patches as mpatches
 import xarray as xr
 from scipy.interpolate import RectBivariateSpline
 import cartopy
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 import pyproj
-import random
 import time
 plt.style.use('bmh')
-startTime=time.time()
 
-#Denne funksjonen gir oss vannhastigheten med bakgrunn i dataene
 class Interpolator():
     def __init__(self, dataset):
         self.dataset = dataset
 
     def get_interpolators(self, X, it):
-        # Add a buffer of cells around the extent of the particle butt
+        # Add a buffer of cells around the extent of the particle cloud
         buf  = 3
-        # Find extent of particle butt in terms of indices
+        # Find extent of particle cloud in terms of indices
         imax = np.searchsorted(self.dataset.X, np.amax(X[0,:])) + buf
         imin = np.searchsorted(self.dataset.X, np.amin(X[0,:])) - buf
         jmax = np.searchsorted(self.dataset.Y, np.amax(X[1,:])) + buf
@@ -55,34 +51,20 @@ class Interpolator():
         dy = fv(X[0,:], X[1,:], grid = False)
         return np.array([dx, dy])
 
-datapath = 'C:/Users/Patrik/Downloads/NorKyst-800m.nc' #her må egen datapath skrives inn
+datapath = 'C:/Users/Even/Downloads/NorKyst-800m.nc'
 d  = xr.open_dataset(datapath)
 f  = Interpolator(dataset = d)
-t = np.datetime64('2017-02-01T12:00:00')
-X = np.array([-3000000, -1200000]).reshape(2, 1)  #reshape (2,Np)
-
-t0   = np.datetime64('2017-02-01T12:00:00')
-h  = np.timedelta64(3600, 's')
-#Step forward
-i = 2
-t = t0 + i*h
-#Get number of seconds in h
-h_seconds = h / np.timedelta64(1, 's')
 
 def Vwater(t,X):
     return f(X,t)
 
-def slopeFunctionForEq2(X,t):
-    dX=np.array(Vwater(t,X))
-    return dX
-
-
-def rk2(X,Vwater,slopeFunction,h,t): #X er en array som kan inneholde enten x,y eller x,y,vx,vy avhening av om hhv eq 2 eller eq 1 skal brukes
-    K1=slopeFunction(X,t)
-    K1=np.array(K1)
-    K2=slopeFunction(X+h*K1,t+h)
-    X_=X+h/2*(K1+K2)
-    return X_
+def rk2(X, t, h, Vwater):
+    h_seconds = h / np.timedelta64(1, 's')
+    Xvel = np.array(Vwater(t, X)).reshape(X.shape)           #finner hastighet i nåværende punkt
+    Xnext = X+h_seconds*Xvel                                #finner approksimert neste punkt
+    XvelNext = np.array(Vwater(t+h, Xnext)).reshape(X.shape) #finner hastighet i approksimert neste punkt
+    Xfinal = X+h_seconds/2*(Xvel+XvelNext)
+    return Xfinal
 
 def particleTrajectory(X0, time_final, h, time_initial, velocityField, integrator):
     numberOfTimeSteps = int((time_final - time_initial) / h)
@@ -91,35 +73,57 @@ def particleTrajectory(X0, time_final, h, time_initial, velocityField, integrato
     X[0, :] = X0
     time_now = time_initial
     for step in range(numberOfTimeSteps):  # Tok bort +1 pga hele timer
-        X[step + 1, :] = integrator(X[step, :],velocityField, slopeFunctionForEq2, h, time_now )
-        time_now += h
+        time_now += h  # numpy håndterer time64-opplegg
+        X[step + 1, :] = integrator(X[step, :], time_now, h, velocityField)
+        # Denne bør virkelig returnere koordinater på formen (2,1) - og det gjør den
     return X
 
-def randomX0Array(lowendY,highendY,lowendX,highendX,numberOfParticles):
-    finalArray=[]
-    for i in range(numberOfParticles):
-        finalArray.append(random.randint(lowendY,highendY))
-    for i in range(numberOfParticles):
-        finalArray.append(random.randint(lowendX,highendX))
-    return finalArray
 def task2a():
+    clockStart = time.time()
     numberOfParticles = 1
-    #fiks partikkelposisjon! :)
-    print(len(initArray))
-    X0 = np.array(initArray).reshape(2, numberOfParticles)  # reshape (2,Np)
+    X0 = np.array([-3e6, -1.2e6]).reshape(2, numberOfParticles)
+    print("X0: \n", X0)
+    startTimes = [np.datetime64('2017-02-01T12:00:00'), np.datetime64('2017-02-05T12:00:00'), np.datetime64('2017-02-07T12:00:00')]
+    endTimes = [np.datetime64('2017-02-11T12:00:00'), np.datetime64('2017-02-15T12:00:00'), np.datetime64('2017-02-17T12:00:00')]
+    dateList = [[1,5,7],[11,15,17]]
+    plt.figure()
+    plt.title("Bane for ulike startdager")
+    for day in range(3):
+        t0, tEnd = startTimes[day], endTimes[day]
+        startDate, endDate = dateList[0][day], dateList[1][day]
+        h = np.timedelta64(3600, 's')
+        trajectories = particleTrajectory(X0, tEnd, h, t0, Vwater, rk2)
+        trajectories = np.hsplit(trajectories, len(trajectories[0]))  # Splitter i x og y
+        xArray = trajectories[0]
+        yArray = trajectories[1]
+        xArrayParticleSplit = np.array([[xArray[i][0][0] for i in range(len(xArray))]])
+        yArrayParticleSplit = np.array([[yArray[i][0][0] for i in range(len(yArray))]])
+        for particle in range(1, numberOfParticles):  # Append smeller alt i samme brackets. Derfor vstack
+            xArrayParticleSplit = np.vstack(
+                (xArrayParticleSplit, np.array([[xArray[i][0][particle] for i in range(len(xArray))]])))
+            yArrayParticleSplit = np.vstack(
+                (yArrayParticleSplit, np.array([[yArray[i][0][particle] for i in range(len(yArray))]])))
+        for index in range(numberOfParticles):
+            plt.plot(xArrayParticleSplit[index], yArrayParticleSplit[index], label=(str(dateList[day])+". feb"))
+        plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
+    clockEnd = time.time()
+    print("Tid brukt:", clockEnd - clockStart)
+    print("Viser plott nå")
+    plt.show()
+
+def task2b():
+    startTime = time.time()
+    numberOfParticles = 3
+    X0 = np.array([-3e6, -3e6, -3e6, -1.2e6, -1.23e6, -1.26e6]).reshape(2, numberOfParticles)
+    #Funker ikke med alt for store verdier
+    print("Startdag 1. feb")
+    print("X0: \n", X0)
     t0 = np.datetime64('2017-02-01T12:00:00')
     tEnd = np.datetime64('2017-02-11T12:00:00')
     h = np.timedelta64(3600, 's')
     trajectories = particleTrajectory(X0, tEnd, h, t0, Vwater, rk2)
-    trajectories = np.hsplit(trajectories, len(trajectories[0]))
-    xArray = trajectories[0]
-    yArray = trajectories[1]
-    xArrayParticleSplit = np.array([ [xArray[i][0][0] for i in range(len(xArray))] ])
-    yArrayParticleSplit = np.array([ [yArray[i][0][0] for i in range(len(yArray))] ])
-    print("xArrayParticleSplit\n", xArrayParticleSplit[0][:5])
-    for particle in range(1,numberOfParticles): #Append smeller alt i samme brackets. Prøver vstack
-        xArrayParticleSplit = np.vstack((xArrayParticleSplit, np.array([ [xArray[i][0][particle] for i in range(len(xArray))] ])))
-        yArrayParticleSplit = np.vstack((yArrayParticleSplit, np.array([ [yArray[i][0][particle] for i in range(len(yArray))] ])))
+    xArray = trajectories[:, 0, :]
+    yArray = trajectories[:, 1, :]
     plt.figure()
     ax = plt.axes(projection=ccrs.NorthPolarStereo())
     land_10m = cfeature.NaturalEarthFeature('physical','land','10m',color='#00aa00')
@@ -127,12 +131,17 @@ def task2a():
     ax.coastlines(resolution='10m')
     p1 = pyproj.Proj(d.projection_stere.proj4)
     p2 = pyproj.Proj(proj='latlong')
-    plt.title("Partikkelens bane")
-    ax.set_extent((-4, 15, 57, 67))
+    plt.title("Ulike startposisjoner 1. feb")
+    ax.set_extent((0.7, 5.7, 58.8, 61.4))
     for index in range(numberOfParticles):
-        lons, lats = pyproj.transform(p1, p2, xArrayParticleSplit[index], yArrayParticleSplit[index])
+        ##############################################################################################
+        lons, lats = pyproj.transform(p1, p2, xArray[:,index], yArray[:,index])
         ax.plot(lons, lats,".", transform=ccrs.PlateCarree(), zorder=2)
     print("Viser plott nå")
     endTime=time.time()
     print("tid brukt",endTime-startTime)
     plt.show()
+
+def oppgave2():
+    task2a()
+    task2b()

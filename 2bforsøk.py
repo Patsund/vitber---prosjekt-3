@@ -54,7 +54,7 @@ class Interpolator():
         dy = fv(X[0,:], X[1,:], grid = False)
         return np.array([dx, dy])
 
-datapath = 'C:/Users/Patrik/Downloads/NorKyst-800m.nc'
+datapath = 'C:/Users/Even/Downloads/NorKyst-800m.nc'
 d  = xr.open_dataset(datapath)
 f  = Interpolator(dataset = d)
 t = np.datetime64('2017-02-01T12:00:00')
