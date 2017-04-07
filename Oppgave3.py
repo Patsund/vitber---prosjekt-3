@@ -392,9 +392,6 @@ def task3b(savefig=False):
             ax.pcolormesh(lons, lats, concentration.T, transform=ccrs.PlateCarree(), zorder=2, cmap='gist_heat_r')
         plt.show()
 
-task3a(savefig=True)
-#task3b()
-
 def oppgave3(saving=False):
     if saving:
         task3a(separate=True, savefig=True)
