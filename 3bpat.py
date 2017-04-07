@@ -10,7 +10,6 @@ import pyproj
 import random
 import time
 plt.style.use('bmh')
-startTime=time.time()
 
 #Denne funksjonen gir oss vannhastigheten med bakgrunn i dataene
 class Interpolator():
@@ -18,9 +17,9 @@ class Interpolator():
         self.dataset = dataset
 
     def get_interpolators(self, X, it):
-        # Add a buffer of cells around the extent of the particle butt
+        # Add a buffer of cells around the extent of the particle cloud
         buf  = 3
-        # Find extent of particle butt in terms of indices
+        # Find extent of particle cloud in terms of indices
         imax = np.searchsorted(self.dataset.X, np.amax(X[0,:])) + buf
         imin = np.searchsorted(self.dataset.X, np.amin(X[0,:])) - buf
         jmax = np.searchsorted(self.dataset.Y, np.amax(X[1,:])) + buf
@@ -94,24 +93,14 @@ def particleTrajectory(X0, time_final, h, time_initial, velocityField, integrato
     return X
 
 #OBS!! Har endret datoen til den 4.
-def randomX0Array(lowendY,highendY,lowendX,highendX,numberOfParticles):
-    finalArray=[]
-    for i in range(numberOfParticles):
-        finalArray.append(random.randint(lowendY,highendY))
-    for i in range(numberOfParticles):
-        finalArray.append(random.randint(lowendX,highendX))
-    return finalArray
 def task2a():
-    numberOfParticles = 10000
-    initArray=randomX0Array(-1.21e6,-1.19e6,-3.01e6,-2.99e6,numberOfParticles)
-    print(len(initArray))
-    #print("initArray",initArray)
-    #uglyArray=[-3e6, -3e6, -1.2e6, -1.3e6]
-    X0 = np.array(initArray).reshape(2, numberOfParticles)  # reshape (2,Np)
+    clockStart = time.time()
+    numberOfParticles = 1
+    X0 = np.array([-3e6, -1.2e6]).reshape(2, numberOfParticles)  # reshape (2,Np)
     #Funker ikke med alt for store verdier
-    #print("X0: \n", X0)
-    t0 = np.datetime64('2017-02-01T12:00:00')
-    tEnd = np.datetime64('2017-02-11T12:00:00')
+    print("X0: \n", X0)
+    t0 = np.datetime64('2017-02-05T12:00:00')
+    tEnd = np.datetime64('2017-02-15T12:00:00')
     h = np.timedelta64(3600, 's')
     trajectories = particleTrajectory(X0, tEnd, h, t0, Vwater, ETMforEq2)
     #print("trajectories før splitting:", trajectories[:5])
@@ -128,81 +117,26 @@ def task2a():
     xArrayParticleSplit = np.array([ [xArray[i][0][0] for i in range(len(xArray))] ])
     yArrayParticleSplit = np.array([ [yArray[i][0][0] for i in range(len(yArray))] ])
     print("xArrayParticleSplit\n", xArrayParticleSplit[0][:5]) #Denne funker fint
-    for particle in range(1,numberOfParticles): #Append smeller alt i samme brackets. Prøver vstack
+    for particle in range(1,numberOfParticles): #Append smeller alt i samme brackets. Derfor vstack
         xArrayParticleSplit = np.vstack((xArrayParticleSplit, np.array([ [xArray[i][0][particle] for i in range(len(xArray))] ])))
         yArrayParticleSplit = np.vstack((yArrayParticleSplit, np.array([ [yArray[i][0][particle] for i in range(len(yArray))] ])))
-    #print(xArrayParticleSplit)
+    print(xArrayParticleSplit)
     plt.figure()
-    ax = plt.axes(projection=ccrs.NorthPolarStereo())
-    land_10m = cfeature.NaturalEarthFeature('physical','land','10m',color='#00aa00')
-    ax.add_feature(land_10m)
-    ax.coastlines(resolution='10m')
-    p1 = pyproj.Proj(d.projection_stere.proj4)
-    p2 = pyproj.Proj(proj='latlong')
-    plt.title("Partikkelens bane")
-    ax.set_extent((-4, 15, 57, 67))
+    plt.title("05. - 15. februar")
     for index in range(numberOfParticles): #endret fra len(xArrayParticleSplit)
-        lons, lats = pyproj.transform(p1, p2, xArrayParticleSplit[index], yArrayParticleSplit[index])
-        ax.plot(lons, lats,".", transform=ccrs.PlateCarree(), zorder=2)
-        #plt.plot(xArrayParticleSplit[index], yArrayParticleSplit[index])
+        plt.plot(xArrayParticleSplit[index], yArrayParticleSplit[index])
+    clockEnd = time.time()
+    print("Tid brukt:", clockEnd - clockStart)
     print("Viser plott nå")
-    endTime=time.time()
-    print("tid brukt",endTime-startTime)
     plt.show()
 
-def task3a():
-    numberOfParticles = 10000
-    #initArray=randomX0Array(-3.01e6,-3e6,-1.35e6,-1.2e6,numberOfParticles)
-    initArray1=np.array(np.random.random_integers(-3.01e6,-3e6,numberOfParticles))
-    initArray2=np.array(np.random.random_integers(-1.35e6,-1.2e6,numberOfParticles))
-    print("tid brukt",time.time()-startTime)
-    initArray=np.concatenate((initArray1,initArray2))
-    print("tid brukt",time.time()-startTime)
-    print(len(initArray))
-    #print("initArray",initArray)
-    X0 = np.array(initArray).reshape(2, numberOfParticles)  # reshape (2,Np)
-    #Funker ikke med alt for store verdier
-    #print("X0: \n", X0)
-    t0 = np.datetime64('2017-02-01T12:00:00')
-    tEnd = np.datetime64('2017-02-11T12:00:00')
-    h = np.timedelta64(3600, 's')
-    print("tid brukt",time.time()-startTime)
-    trajectories = particleTrajectory(X0, tEnd, h, t0, Vwater, ETMforEq2)
-    trajectories = np.hsplit(trajectories, len(trajectories[0])) #Splitter i x og y
-    print("tid brukt",time.time()-startTime)
-    xArray = trajectories[0]
-    yArray = trajectories[1]
-    print("tid brukt",time.time()-startTime)
-    plt.figure(1)
-    ax = plt.axes(projection=ccrs.NorthPolarStereo())
-    land_10m = cfeature.NaturalEarthFeature('physical','land','10m',color='#00aa00')
-    ax.add_feature(land_10m)
-    ax.coastlines(resolution='10m')
-    ax.set_extent((-4, 15, 57, 67))
-    p1 = pyproj.Proj(d.projection_stere.proj4)
-    p2 = pyproj.Proj(proj='latlong')
-    plt.title("Partikkelens bane")
-    colors=["r.","b.","g.","c.","k.","y."]
-    for index in range(0,6): #endret fra len(xArrayParticleSplit)
-        print("tid brukt",time.time()-startTime)
-        #plt.figure(index)
-        #ax = plt.axes(projection=ccrs.NorthPolarStereo())
-        #land_10m = cfeature.NaturalEarthFeature('physical','land','10m',color='#00aa00')
-        #ax.add_feature(land_10m)
-        #ax.coastlines(resolution='10m')
-        #ax.set_extent((-4, 15, 57, 67))
-        lons, lats = pyproj.transform(p1, p2, xArray[index*2*24], yArray[index*2*24])
-        ax.plot(lons, lats,colors[index], transform=ccrs.PlateCarree(), zorder=2)
-        #plt.savefig("3a"+str(index)+".pdf")
-        #plt.plot(xArrayParticleSplit[index], yArrayParticleSplit[index])
-    #ax.legend(handles=[xArray,yArray],bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
-    plt.savefig("totalfigur3a.pdf")
-    print("Viser plott nå")
-    endTime=time.time()
-    print("tid brukt",endTime-startTime)
-    #ax.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
-    #plt.show()
-
+def randomX0Array(lowendY,highendY,lowendX,highendX,numberOfParticles):
+    finalArray=[]
+    for i in range(numberOfParticles):
+        finalArray.append(random.randint(lowendY,highendY))
+    for i in range(numberOfParticles):
+        finalArray.append(random.randint(lowendX,highendX))
+    return finalArray
 
 def frequencyCounter(X,Nx,Ny,numberOfParticles):
     cellSize = 800
@@ -217,14 +151,13 @@ def frequencyCounter(X,Nx,Ny,numberOfParticles):
 def task3b():
     Nx, Ny = 800, 300
     x = -3010000 + 800 * np.arange(Nx)
-    y = -1360000 + 800 * np.arange(Ny)
+    y = -1300000 + 800 * np.arange(Ny)
     print("heyheyheyyy")
     x, y = np.meshgrid(x, y)
     print("ferdig med meshgrid")
-    plt.figure(1)
     # Randomize startposisjoner og kalkuler sanns.
     # Lager en grid. Skal koordinatene i disse endres eller hva? Hvordan flytter vi partiklene?
-    #fig = plt.figure(figsize=(12, 8))
+    fig = plt.figure(figsize=(12, 8))
     ax = plt.axes(projection=ccrs.NorthPolarStereo())
     land_10m = cfeature.NaturalEarthFeature('physical', 'land', '10m', color='#dddddd')
     ax.add_feature(land_10m)
@@ -256,27 +189,8 @@ def task3b():
         ax.pcolormesh(lons, lats, concentration, transform=ccrs.PlateCarree(), zorder=2)
     ax.set_extent((-5, 15, 57, 67))
     print("begynner å save")
-    #plt.savefig("figurgitter.pdf")
+    plt.savefig("figurgitter.pdf")
     print("ferdig")
     plt.show()
-
-#task2a()
-task3a()
+startTime=time.time()
 task3b()
-########################################
-#### Plotting trajectories on a map ####
-########################################
-# Nt=1000
-# x = -2800000 + 30000 * np.linspace(0,4*np.pi,Nt)
-# y = -1200000 + 10000 * np.sin(np.linspace(0,12*np.pi,Nt))
-# d = xr.open_dataset(datapath)
-# fig = plt.figure(figsize=(12,8))
-# ax = plt.axes(projection=ccrs.NorthPolarStereo())
-# land_10m = cfeature.NaturalEarthFeature('physical','land','10m',color='#dddddd')
-# ax.add_feature(land_10m)
-# ax.coastlines(resolution='10m')
-# p1 = pyproj.Proj(d.projection_stere.proj4)
-# p2 = pyproj.Proj(proj='latlong')
-# lons, lats = pyproj.transform(p1, p2, x, y)
-# ax.plot(lons, lats, transform=ccrs.PlateCarree(), zorder=2)
-# plt.show()
