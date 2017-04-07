@@ -17,3 +17,20 @@ Plot partikkelens bane med ok h
 Plot development of timestep over time
 
 2a
+Plot trajectory in xy coordinates using different start dates (1. -10. feb)
+Vis et plott av banen til en enkelt partikkel. Siden
+dere ogs˚a skal teste for forskjellige start–datoer kan
+dere gjerne vise dette i samme figur (med forskjellig
+farge p˚a kurvene, s˚aklart.
+
+2b
+Lag plot p˚a kart, basert p˚a eksempelkoden, og vis
+med dette tre unike partikler som starter i forskjellige
+punkter, ved samme tid
+
+3a
+For 10000 partikler skal dere n˚a plotte hver partikkels
+posisjon ved t = 0, 2, 4, 6, 8, 10
+
+3b
+Plot the concentration grid at t = 0, 2, 4, 6, 8, 10. 

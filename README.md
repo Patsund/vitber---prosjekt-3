@@ -52,4 +52,4 @@ Oppgave 3
 	1. Define a grid with 800 meters x 800 meters cells with same coordinates as map.
 	2. Calculate concentration by counting the number of particles in each cell
 	3. Plot the concentration grid at t = 0, 2, 4, 6, 8, 10. 
-	4. Her angir vi fargestyrke proporsjonalt med concentration?
+	4. Her angir vi fargestyrke proporsjonalt med concentration
