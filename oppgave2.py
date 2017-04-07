@@ -69,13 +69,11 @@ def rk2(X, t, h, Vwater):
 def particleTrajectory(X0, time_final, h, time_initial, velocityField, integrator):
     numberOfTimeSteps = int((time_final - time_initial) / h)
     X = np.zeros((numberOfTimeSteps + 1, *X0.shape))
-    # X lagrer alle partiklenes posisjon gjennom hele tidsforløpet
     X[0, :] = X0
     time_now = time_initial
-    for step in range(numberOfTimeSteps):  # Tok bort +1 pga hele timer
-        time_now += h  # numpy håndterer time64-opplegg
+    for step in range(numberOfTimeSteps):
+        time_now += h
         X[step + 1, :] = integrator(X[step, :], time_now, h, velocityField)
-        # Denne bør virkelig returnere koordinater på formen (2,1) - og det gjør den
     return X
 
 def task2a():
@@ -85,29 +83,22 @@ def task2a():
     print("X0: \n", X0)
     startTimes = [np.datetime64('2017-02-01T12:00:00'), np.datetime64('2017-02-05T12:00:00'), np.datetime64('2017-02-07T12:00:00')]
     endTimes = [np.datetime64('2017-02-11T12:00:00'), np.datetime64('2017-02-15T12:00:00'), np.datetime64('2017-02-17T12:00:00')]
-    dateList = [[1,5,7],[11,15,17]]
+    dateList = [1, 5, 7]
     plt.figure()
-    plt.title("Bane for ulike startdager")
     for day in range(3):
         t0, tEnd = startTimes[day], endTimes[day]
-        startDate, endDate = dateList[0][day], dateList[1][day]
         h = np.timedelta64(3600, 's')
         trajectories = particleTrajectory(X0, tEnd, h, t0, Vwater, rk2)
-        trajectories = np.hsplit(trajectories, len(trajectories[0]))  # Splitter i x og y
-        xArray = trajectories[0]
-        yArray = trajectories[1]
-        xArrayParticleSplit = np.array([[xArray[i][0][0] for i in range(len(xArray))]])
-        yArrayParticleSplit = np.array([[yArray[i][0][0] for i in range(len(yArray))]])
-        for particle in range(1, numberOfParticles):  # Append smeller alt i samme brackets. Derfor vstack
-            xArrayParticleSplit = np.vstack(
-                (xArrayParticleSplit, np.array([[xArray[i][0][particle] for i in range(len(xArray))]])))
-            yArrayParticleSplit = np.vstack(
-                (yArrayParticleSplit, np.array([[yArray[i][0][particle] for i in range(len(yArray))]])))
+        xArray = trajectories[:, 0, :]
+        yArray = trajectories[:, 1, :]
+        print("Tid brukt:", time.time() - clockStart)
+        print("Plotter bane nr", day + 1)
         for index in range(numberOfParticles):
-            plt.plot(xArrayParticleSplit[index], yArrayParticleSplit[index], label=(str(dateList[day])+". feb"))
-        plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
-    clockEnd = time.time()
-    print("Tid brukt:", clockEnd - clockStart)
+            plt.plot(xArray[:, index], yArray[:, index], label=(str(dateList[day])+". feb"))
+        plt.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc=3, ncol=2, mode="expand", borderaxespad=0.)
+        #plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
+    plt.title("Bane for ulike startdager")
+    print("Tid brukt:", time.time() - clockStart)
     print("Viser plott nå")
     plt.show()
 
@@ -145,3 +136,5 @@ def task2b():
 def oppgave2():
     task2a()
     task2b()
+
+task2a()
