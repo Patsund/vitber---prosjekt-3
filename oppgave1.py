@@ -272,7 +272,7 @@ def task1c(savefig=False):
         plt.xlabel("timestep / sekunder")
         plt.ylabel("error / meter")
         plt.title("Avvik fra analytisk løsning")
-        plt.savefig("Opggave1pdfer\oppgave1cplot.pdf")
+        plt.savefig("Oppgave1pdfer\opg1cplot.pdf")
     else:
         L = 1.0E+02
         differentTimesteps = 10

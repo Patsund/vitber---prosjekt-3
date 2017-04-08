@@ -14,6 +14,7 @@ plt.style.use('bmh')
 startTime=time.time()
 
 def oppgave3(datapath, saving=False):
+    opg3Time=time.time()
     global d, f
     d  = xr.open_dataset(datapath)
     f  = Interpolator(dataset = d)
@@ -24,12 +25,15 @@ def oppgave3(datapath, saving=False):
         task3a(savefig=True)
         print("**Oppgave 3b**")
         task3b(savefig=True)
+        print("brukte",time.time()-opg3Time(),"sekunder på oppgave 3")
     else:
         print("**Oppgave 3a**")
         task3a()
         print("**Oppgave 3b**")
         task3b()
+        print("brukte",time.time()-opg3Time(),"sekunder på oppgave 3")
         plt.show()
+
 #Denne funksjonen gir oss vannhastigheten med bakgrunn i dataene
 class Interpolator():
     def __init__(self, dataset):
@@ -151,6 +155,7 @@ def task3a(separate=False, savefig=False):
                 print("saving figure")
                 figTime=time.time()
                 plt.savefig("3apdfer\q3adag"+str(index*2)+"plot.pdf")
+                plt.close()
                 print("figure saved, spent",time.time()-figTime,"seconds saving")
         else:
             numberOfParticles = 10000
@@ -189,6 +194,7 @@ def task3a(separate=False, savefig=False):
             print("image saved spent",time.time()-imgTime,"seconds, now saving figure")
             figTime=time.time()
             plt.savefig("3apdfer\qtotalfigur3a.pdf")
+            plt.close()
             print("figure saved, spent",time.time()-figTime,"seconds saving")
             #endTime=time.time()
     else:
@@ -311,7 +317,8 @@ def task3b(savefig=False):
             ax.pcolormesh(lons, lats, concentration.T, transform=ccrs.PlateCarree(), zorder=2, cmap='gist_heat_r')
             print("saving figure")
             figTime=time.time()
-            plt.savefig("3bpdfer\oppgave3b"+str(2*day)+".png")
+            plt.savefig("3bpdfer\oppgave3b"+str(2*day)+".pdf")
+            plt.close()
             print("figure saved, spent",time.time()-figTime,"seconds saving")
         #plt.show()
     else:
