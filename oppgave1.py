@@ -35,18 +35,16 @@ def fForEq2(X,t):
     return dX
 
 def fForEq1(X,t):
-    Vw=Vwater(t,[X[0],X[1]])
-    dx=X[2]
-    dy=X[3]
-    dvx=alpha/m*(Vw[0]-X[2])
-    dvy=alpha/m*(Vw[1]-X[3])
+    Vw = Vwater(t, [X[0], X[1]])
+    dx, dy = X[2], X[3]
+    dvx = alpha/m*(Vw[0]-X[2])
+    dvy = alpha/m*(Vw[1]-X[3])
     return [dx,dy,dvx,dvy]
 
-def rk2(X,f,h,t): #X er en array som kan inneholde enten x,y eller x,y,vx,vy avhening av om hhv eq 2 eller eq 1 skal brukes
-    K1=f(X,t)
-    K1=np.array(K1)
-    K2=f(X+h*K1,t+h)
-    X_=X+h/2*(K1+K2)
+def rk2(X,f,h,t): #X er en array som kan inneholde enten x,y eller x,y,vx,vy avhengin av om hhv eq 2 eller eq 1 skal brukes
+    K1 = np.array(f(X, t))
+    K2 = np.array(f(X+h*K1, t+h))
+    X_= X+h/2*(K1+K2)
     return X_
 
 def errorAndTrajectoryForRK2(X,h,figname):
