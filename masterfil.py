@@ -13,7 +13,8 @@ def printOptions():
 def printSave():
 	outStr = "\n1) Vis figurer"
 	outStr+= "\n2) Lagre figurer"
-	outStr+= "\n0) Tilbake"
+	outStr+= "\n3) Tilbake"
+	outStr+= "\n0) Avslutt"
 	outStr+= "\nDitt valg:"
 	return outStr
 
@@ -26,7 +27,7 @@ if __name__ == "__main__":
 			save = int(input(printSave()))
 		except:
 			pass
-		if save==0:
+		if save == 3:
 			pass
 		if switch == 1:
 			if save == 1:
@@ -54,7 +55,7 @@ if __name__ == "__main__":
 			else:
 				print("Du oppga ikke en gyldig verdi for å lagre/vise figurer")
 				pass
-		elif switch == 0:
+		elif switch == 0 or save == 0:
 			break
 		else:
 			print("Du oppga ikke en gyldig verdi for å velge oppgave\n")

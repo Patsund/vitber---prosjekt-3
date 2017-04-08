@@ -94,7 +94,6 @@ def rk2(X,t,h,Vwater):
     Xnext=X+h_seconds*Xvel #finner approksimert neste punkt
     XvelNext=np.array(Vwater(t+h,Xnext)).reshape(X.shape) #finner hastighet i approksimert neste punkt
     Xfinal=X+h_seconds/2*(Xvel+XvelNext)
-    #print("Xfinal",Xfinal)
     return Xfinal
 
 def particleTrajectory(X0, time_final, h, time_initial, velocityField, integrator):
@@ -109,7 +108,6 @@ def particleTrajectory(X0, time_final, h, time_initial, velocityField, integrato
         # Denne bør virkelig returnere koordinater på formen (2,1) - og det gjør den
     return X
 
-#OBS!! Har endret datoen til den 4.
 def randomX0Array(lowendY,highendY,lowendX,highendX,numberOfParticles):
     finalArray=[]
     for i in range(numberOfParticles):
@@ -154,7 +152,6 @@ def task3a(separate=False, savefig=False):
                 figTime=time.time()
                 plt.savefig("3apdfer\q3adag"+str(index*2)+"plot.pdf")
                 print("figure saved, spent",time.time()-figTime,"seconds saving")
-            #plt.show()
         else:
             numberOfParticles = 10000
             initArray=randomX0Array(-3.01e6,-2.99e6,-1.21e6,-1.19e6,numberOfParticles)

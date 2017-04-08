@@ -94,7 +94,6 @@ def task2a(savefig=False):
         clockStart = time.time()
         numberOfParticles = 1
         X0 = np.array([-3e6, -1.2e6]).reshape(2, numberOfParticles)
-        print("X0: \n", X0)
         startTimes = [np.datetime64('2017-02-01T12:00:00'), np.datetime64('2017-02-05T12:00:00'), np.datetime64('2017-02-07T12:00:00')]
         endTimes = [np.datetime64('2017-02-11T12:00:00'), np.datetime64('2017-02-15T12:00:00'), np.datetime64('2017-02-17T12:00:00')]
         dateList = [1, 5, 7]
@@ -109,7 +108,7 @@ def task2a(savefig=False):
             print("Plotter bane nr", day + 1)
             for index in range(numberOfParticles):
                 plt.plot(xArray[:, index], yArray[:, index], label=(str(dateList[day])+". feb"))
-            plt.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc=3, ncol=2, mode="expand", borderaxespad=0.)
+            plt.legend(bbox_to_anchor=(0., 1.1, 1., .052), loc="best", ncol=3, mode="expand", borderaxespad=0.)
             #plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
         plt.title("Bane for ulike startdager")
         print("Tid brukt:", time.time() - clockStart)
@@ -119,7 +118,6 @@ def task2a(savefig=False):
         clockStart = time.time()
         numberOfParticles = 1
         X0 = np.array([-3e6, -1.2e6]).reshape(2, numberOfParticles)
-        print("X0: \n", X0)
         startTimes = [np.datetime64('2017-02-01T12:00:00'), np.datetime64('2017-02-05T12:00:00'), np.datetime64('2017-02-07T12:00:00')]
         endTimes = [np.datetime64('2017-02-11T12:00:00'), np.datetime64('2017-02-15T12:00:00'), np.datetime64('2017-02-17T12:00:00')]
         dateList = [1, 5, 7]
@@ -134,7 +132,7 @@ def task2a(savefig=False):
             print("Plotter bane nr", day + 1)
             for index in range(numberOfParticles):
                 plt.plot(xArray[:, index], yArray[:, index], label=(str(dateList[day])+". feb"))
-            plt.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc=3, ncol=2, mode="expand", borderaxespad=0.)
+            plt.legend(bbox_to_anchor=(0., 1.1, 1., .052), loc="best", ncol=3, mode="expand", borderaxespad=0.)
             #plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
         plt.title("Bane for ulike startdager")
         print("Tid brukt:", time.time() - clockStart)
@@ -145,9 +143,6 @@ def task2b(savefig=False):
         startTime = time.time()
         numberOfParticles = 3
         X0 = np.array([-3e6, -3e6, -3e6, -1.2e6, -1.23e6, -1.26e6]).reshape(2, numberOfParticles)
-        #Funker ikke med alt for store verdier
-        print("Startdag 1. feb")
-        print("X0: \n", X0)
         t0 = np.datetime64('2017-02-01T12:00:00')
         tEnd = np.datetime64('2017-02-11T12:00:00')
         h = np.timedelta64(3600, 's')
@@ -175,9 +170,6 @@ def task2b(savefig=False):
         startTime = time.time()
         numberOfParticles = 3
         X0 = np.array([-3e6, -3e6, -3e6, -1.2e6, -1.23e6, -1.26e6]).reshape(2, numberOfParticles)
-        #Funker ikke med alt for store verdier
-        print("Startdag 1. feb")
-        print("X0: \n", X0)
         t0 = np.datetime64('2017-02-01T12:00:00')
         tEnd = np.datetime64('2017-02-11T12:00:00')
         h = np.timedelta64(3600, 's')
