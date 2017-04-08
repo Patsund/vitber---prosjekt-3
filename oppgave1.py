@@ -50,6 +50,7 @@ def rk2(X,f,h,t): #X er en array som kan inneholde enten x,y eller x,y,vx,vy avh
     return X_
 
 def errorAndTrajectoryForRK2(X,h,figname):
+    h0=h
     timeNow, timeFinal = 0, 48*3600
     n=int(timeFinal/h)
     newX=np.array(X)
@@ -67,14 +68,14 @@ def errorAndTrajectoryForRK2(X,h,figname):
     vecError=X-newX
     if figname=="dummy":
         X=[]
-        plt.figure(str(h)+"Trap")
-        plt.title("Trajectory for particle using trapezoid, h = "+str(h))
+        plt.figure("1b h="+str(h0)+" Trap")
+        plt.title("Trajectory for particle using trapezoid, h = "+str(h0))
         plt.plot(xList,yList)
     elif figname=="errorOnly":
         pass
     else:
         plt.figure(figname)
-        plt.title("Tracectory for particle using trapezoid, h = "+str(h))
+        plt.title("Tracectory for particle using trapezoid, h = "+str(h0))
         plt.plot(xList,yList)
         plt.savefig("Oppgave1pdfer\opg"+figname)
         plt.close()
@@ -82,6 +83,7 @@ def errorAndTrajectoryForRK2(X,h,figname):
     return error
 
 def errorAndTrajectoryForEuler(X,h,figname):
+    h0=h
     x,y=X[0],X[1]
     xList,yList=[],[]
     newX=[x,y] #oppretter en ny matrise for å unngå å endre på X. Må skje siden vi endrer på newX ila neste for-løkke
@@ -99,14 +101,14 @@ def errorAndTrajectoryForEuler(X,h,figname):
     newX=np.array(newX)#men funksjonen er nå kompatibel med både vanlige arrays og nparrays.
     vecError=X-newX #finner vektoren fra X til newX
     if figname=="dummy":
-        plt.figure(str(h)+"Eul")
-        plt.title("Trajectory for particle using Euler, h = "+str(h))
+        plt.figure("1a h="+str(h0)+" Eul")
+        plt.title("Trajectory for particle using Euler, h = "+str(h0))
         plt.plot(xList,yList)
     elif figname=="errorOnly":
         pass
     else:
         plt.figure(figname)
-        plt.title("Trajectory for particle using Euler, h = "+str(h))
+        plt.title("Trajectory for particle using Euler, h = "+str(h0))
         plt.plot(xList,yList)
         plt.savefig("Oppgave1pdfer\opg"+figname)
         plt.close()
@@ -132,6 +134,7 @@ def analyticSolution(L,alpha,m):
     return X
 
 def task1a(savefig=False):
+    print("**Oppgave 1a**")
     X=[100,0]
     h0=60*60 #sekund
     thiserror = errorAndTrajectoryForEuler(X,h0,"errorOnly")
@@ -139,7 +142,7 @@ def task1a(savefig=False):
         h0-=1
         thiserror = errorAndTrajectoryForEuler(X,h0,"errorOnly")
     timestepEuler=h0
-    print("tidssteget som kreves for å få en global feil mindre enn 10 m er h =",timestepEuler)
+    print("Det minste tidssteget som kreves for å ikke få en global feil større enn 10 m med Euler er h =",timestepEuler)
     if savefig:
         X=[100,0]
         h=100
@@ -170,6 +173,7 @@ def task1a(savefig=False):
         #plt.show()
 
 def task1b(savefig=False):
+    print("**Oppgave 1b**")
     X=[100,0]
     h0=60*60 #sekund
     thiserror = errorAndTrajectoryForEuler(X,h0,"errorOnly")
@@ -183,7 +187,7 @@ def task1b(savefig=False):
         h0-=1
         thiserror = errorAndTrajectoryForRK2(X,h0,"errorOnly")
     timestepTrap=h0
-    print("tidssteget som kreves for å få en global feil mindre enn 10 m med trapesmetoden er h =",timestepTrap)
+    print("Det minste tidssteget som kreves for å ikke få en global feil større enn 10 m med trapesmetoden er h =",timestepTrap)
     if savefig:
         X=[100,0]
         h=100
@@ -237,11 +241,11 @@ def task1b(savefig=False):
     print("Euler bruker",endTimeEuler,"sekunder med error < 10 m. Trapesmetoden bruker",endTimeRK2,"sekunder med error < 10 m")
 
 def task1c(savefig=False):
+    print("**Oppgave 1c**")
     if savefig:
         L = 1.0E+02
         differentTimesteps = 10
         analyticEndpoint = np.array(analyticSolution(L, alpha, m))
-        print("Analytisk ende", analyticEndpoint)
         timestepArray = np.linspace(10, 2*m/alpha -1, num=differentTimesteps)
         errorArray = np.zeros(differentTimesteps)
         for i in range(differentTimesteps):
@@ -260,10 +264,11 @@ def task1c(savefig=False):
             yValueArray = [k[1] for k in coordinateArray]
             errorArray[i] = np.linalg.norm(np.array([X[0], X[1]]) - analyticEndpoint)
             if i == 3:
-                plt.figure(i)
+                plt.figure("1c"+str(i))
                 plt.title("tidssteg " + str(h))
                 plt.plot(xValueArray, yValueArray, 'ro', markersize=1)
-                plt.plot([analyticEndpoint[0]], [analyticEndpoint[1]], 'ko', markersize=4)
+                plt.plot([analyticEndpoint[0]], [analyticEndpoint[1]], 'ko', markersize=4,label="analytisk ende")
+                plt.legend(loc="best")
         plt.figure()
         plt.plot(timestepArray,errorArray)
         plt.xlabel("timestep / sekunder")
@@ -274,7 +279,6 @@ def task1c(savefig=False):
         L = 1.0E+02
         differentTimesteps = 10
         analyticEndpoint = np.array(analyticSolution(L, alpha, m))
-        print("Analytisk ende", analyticEndpoint)
         timestepArray = np.linspace(10, 2*m/alpha -1, num=differentTimesteps)
         errorArray = np.zeros(differentTimesteps)
         for i in range(differentTimesteps):
@@ -293,11 +297,12 @@ def task1c(savefig=False):
             yValueArray = [k[1] for k in coordinateArray]
             errorArray[i] = np.linalg.norm(np.array([X[0], X[1]]) - analyticEndpoint)
             if i == 3:
-                plt.figure(i)
+                plt.figure("1c"+str(i))
                 plt.title("tidssteg " + str(h))
                 plt.plot(xValueArray, yValueArray, 'ro', markersize=1)
-                plt.plot([analyticEndpoint[0]], [analyticEndpoint[1]], 'ko', markersize=4)
-        plt.figure()
+                plt.plot([analyticEndpoint[0]], [analyticEndpoint[1]], 'ko', markersize=4, label="analytisk ende")
+                plt.legend(loc="best")
+        plt.figure("1c avvik")
         plt.plot(timestepArray,errorArray)
         plt.xlabel("timestep / sekunder")
         plt.ylabel("error / meter")
@@ -305,6 +310,7 @@ def task1c(savefig=False):
         #plt.show()
 
 def task1d(savefig=False):
+    print("**Oppgave 1d**")
     if savefig:
         L = 1.0E+02
         timeNow = 0
@@ -319,7 +325,6 @@ def task1d(savefig=False):
         analyticEndpoint = analyticSolution(L, alpha, m)
         print("Analytisk ende", analyticEndpoint)
         while (timeNow < totalTime):
-            p=False
             if timeNow==0:
                 h=1000
                 Xeul = eulerForEq1(X[:2], timeNow, Vwater, X[2:], h)
@@ -331,20 +336,15 @@ def task1d(savefig=False):
                     Xeul = eulerForEq1(X[:2], timeNow, Vwater, X[2:], h)
                     Xtrap = rk2(X, fForEq1, h, timeNow)
                     thisDeviation = np.linalg.norm(Xtrap[:2] - Xeul)
-                print("h initialized to",h,"seconds")
             h = min(h, totalTime - timeNow)
             Xeul = eulerForEq1(X[:2], timeNow, Vwater, X[2:], h)
             Xtrap = rk2(X, fForEq1, h, timeNow)
             thisDeviation = np.linalg.norm(Xtrap[:2] - Xeul)
             while (thisDeviation > deviationLimit):
-                #p=True
-                print("Avviket er ",thisDeviation,"med h =",h,"tid igjen er ",totalTime-timeNow)
                 h = h/2
                 Xeul = eulerForEq1(X[:2], timeNow, Vwater, X[2:], h)
                 Xtrap = rk2(X,fForEq1,h,timeNow)
                 thisDeviation = np.linalg.norm(Xtrap[:2] - Xeul)
-            if p:
-                print("Avviket er ",thisDeviation,"med h =",h,"tid igjen er ",totalTime-timeNow)
             timeStepArray.append([timeNow, h])
             deviationArray.append(thisDeviation)
             timeNow += h
@@ -356,22 +356,23 @@ def task1d(savefig=False):
         yValueArray = [k[1] for k in coordinateArray]
         timeStepArray_xValues = [k[0] for k in timeStepArray]
         timeStepArray_yValues = [k[1] for k in timeStepArray]
-        print(timeStepArray)
-        plt.figure()
+        plt.figure("1dTidssteg")
         plt.title("Tidssteg")
         plt.plot(timeStepArray_xValues, timeStepArray_yValues, 'go', markersize=1)
         plt.xlabel("tid / sekunder")
         plt.ylabel("tidssteg / sekunder")
         plt.savefig("Oppgave1pdfer\opg1dtidssteg.pdf")
-        plt.figure()
+        plt.figure("1dAvvik")
         plt.title("Avvik mellom Euler og Trapes")
         plt.plot(timeStepArray_xValues, deviationArray, 'ko', markersize=1)
         plt.xlabel("tid / sekunder")
         plt.ylabel("avvik / meter")
         plt.savefig("Oppgave1pdfer\opg1dAvvik.pdf")
-        plt.figure()
+        plt.figure("1dBane")
         plt.title("Bane med variabelt tidssteg")
         plt.plot(xValueArray, yValueArray, 'ro', markersize=0.4)
+        plt.plot([analyticEndpoint[0]], [analyticEndpoint[1]], 'ko', markersize=4, label="analytisk ende")
+        plt.legend(loc="best")
         plt.savefig("Oppgave1pdfer\opg1dBane.pdf")
     else:
         L = 1.0E+02
@@ -387,7 +388,6 @@ def task1d(savefig=False):
         analyticEndpoint = analyticSolution(L, alpha, m)
         print("Analytisk ende", analyticEndpoint)
         while (timeNow < totalTime):
-            p=False
             if timeNow==0:
                 h=1000
                 Xeul = eulerForEq1(X[:2], timeNow, Vwater, X[2:], h)
@@ -399,20 +399,15 @@ def task1d(savefig=False):
                     Xeul = eulerForEq1(X[:2], timeNow, Vwater, X[2:], h)
                     Xtrap = rk2(X, fForEq1, h, timeNow)
                     thisDeviation = np.linalg.norm(Xtrap[:2] - Xeul)
-                print("h initialized to",h,"seconds")
             h = min(h, totalTime - timeNow)
             Xeul = eulerForEq1(X[:2], timeNow, Vwater, X[2:], h)
             Xtrap = rk2(X, fForEq1, h, timeNow)
             thisDeviation = np.linalg.norm(Xtrap[:2] - Xeul)
             while (thisDeviation > deviationLimit):
-                #p=True
-                print("Avviket er ",thisDeviation,"med h =",h,"tid igjen er ",totalTime-timeNow)
                 h = h/2
                 Xeul = eulerForEq1(X[:2], timeNow, Vwater, X[2:], h)
                 Xtrap = rk2(X,fForEq1,h,timeNow)
                 thisDeviation = np.linalg.norm(Xtrap[:2] - Xeul)
-            if p:
-                print("Avviket er ",thisDeviation,"med h =",h,"tid igjen er ",totalTime-timeNow)
             timeStepArray.append([timeNow, h])
             deviationArray.append(thisDeviation)
             timeNow += h
@@ -424,21 +419,21 @@ def task1d(savefig=False):
         yValueArray = [k[1] for k in coordinateArray]
         timeStepArray_xValues = [k[0] for k in timeStepArray]
         timeStepArray_yValues = [k[1] for k in timeStepArray]
-        print(timeStepArray)
-        plt.figure()
+        plt.figure("1dtidssteg")
         plt.title("Tidssteg")
         plt.plot(timeStepArray_xValues, timeStepArray_yValues, 'go', markersize=1)
         plt.xlabel("tid / sekunder")
         plt.ylabel("tidssteg / sekunder")
-        plt.figure()
+        plt.figure("1davvik")
         plt.title("Avvik mellom Euler og Trapes")
         plt.plot(timeStepArray_xValues, deviationArray, 'ko', markersize=1)
         plt.xlabel("tid / sekunder")
         plt.ylabel("avvik / meter")
-        plt.figure()
+        plt.figure("1dbane")
         plt.title("Bane med variabelt tidssteg")
         plt.plot(xValueArray, yValueArray, 'ro', markersize=0.4)
-        print("Final error:", np.linalg.norm(X[:2] - analyticEndpoint))
+        plt.plot([analyticEndpoint[0]], [analyticEndpoint[1]], 'ko', markersize=4, label="analytisk ende")
+        plt.legend(loc="best")
         #plt.show()
 
 
@@ -455,4 +450,3 @@ def oppgave1(saving=False):
         task1d()
         plt.show()
 
-oppgave1()

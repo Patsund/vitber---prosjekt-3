@@ -10,6 +10,23 @@ import pyproj
 import time
 plt.style.use('bmh')
 
+
+def oppgave2(datapath, savefig=False):
+    global d, f
+    d  = xr.open_dataset(datapath)
+    f  = Interpolator(dataset = d)
+    if savefig:
+        print("**Oppgave 2a**")
+        task2a(True)
+        print("**Oppgave 2b**")
+        task2b(True)
+    else:
+        print("**Oppgave 2a**")
+        task2a()
+        print("**Oppgave 2b**")
+        task2b()
+        plt.show()
+
 class Interpolator():
     def __init__(self, dataset):
         self.dataset = dataset
@@ -51,10 +68,6 @@ class Interpolator():
         dy = fv(X[0,:], X[1,:], grid = False)
         return np.array([dx, dy])
 
-datapath = 'C:/Users/Even/Downloads/NorKyst-800m.nc'
-d  = xr.open_dataset(datapath)
-f  = Interpolator(dataset = d)
-
 def Vwater(t,X):
     return f(X,t)
 
@@ -76,65 +89,114 @@ def particleTrajectory(X0, time_final, h, time_initial, velocityField, integrato
         X[step + 1, :] = integrator(X[step, :], time_now, h, velocityField)
     return X
 
-def task2a():
-    clockStart = time.time()
-    numberOfParticles = 1
-    X0 = np.array([-3e6, -1.2e6]).reshape(2, numberOfParticles)
-    print("X0: \n", X0)
-    startTimes = [np.datetime64('2017-02-01T12:00:00'), np.datetime64('2017-02-05T12:00:00'), np.datetime64('2017-02-07T12:00:00')]
-    endTimes = [np.datetime64('2017-02-11T12:00:00'), np.datetime64('2017-02-15T12:00:00'), np.datetime64('2017-02-17T12:00:00')]
-    dateList = [1, 5, 7]
-    plt.figure()
-    for day in range(3):
-        t0, tEnd = startTimes[day], endTimes[day]
+def task2a(savefig=False):
+    if savefig:
+        clockStart = time.time()
+        numberOfParticles = 1
+        X0 = np.array([-3e6, -1.2e6]).reshape(2, numberOfParticles)
+        print("X0: \n", X0)
+        startTimes = [np.datetime64('2017-02-01T12:00:00'), np.datetime64('2017-02-05T12:00:00'), np.datetime64('2017-02-07T12:00:00')]
+        endTimes = [np.datetime64('2017-02-11T12:00:00'), np.datetime64('2017-02-15T12:00:00'), np.datetime64('2017-02-17T12:00:00')]
+        dateList = [1, 5, 7]
+        plt.figure("2a")
+        for day in range(3):
+            t0, tEnd = startTimes[day], endTimes[day]
+            h = np.timedelta64(3600, 's')
+            trajectories = particleTrajectory(X0, tEnd, h, t0, Vwater, rk2)
+            xArray = trajectories[:, 0, :]
+            yArray = trajectories[:, 1, :]
+            print("Tid brukt:", time.time() - clockStart)
+            print("Plotter bane nr", day + 1)
+            for index in range(numberOfParticles):
+                plt.plot(xArray[:, index], yArray[:, index], label=(str(dateList[day])+". feb"))
+            plt.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc=3, ncol=2, mode="expand", borderaxespad=0.)
+            #plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
+        plt.title("Bane for ulike startdager")
+        print("Tid brukt:", time.time() - clockStart)
+        print("Viser plott nå")
+        plt.savefig("Oppgave2pdfer\oppgave2a.pdf")
+    else:
+        clockStart = time.time()
+        numberOfParticles = 1
+        X0 = np.array([-3e6, -1.2e6]).reshape(2, numberOfParticles)
+        print("X0: \n", X0)
+        startTimes = [np.datetime64('2017-02-01T12:00:00'), np.datetime64('2017-02-05T12:00:00'), np.datetime64('2017-02-07T12:00:00')]
+        endTimes = [np.datetime64('2017-02-11T12:00:00'), np.datetime64('2017-02-15T12:00:00'), np.datetime64('2017-02-17T12:00:00')]
+        dateList = [1, 5, 7]
+        plt.figure("2a")
+        for day in range(3):
+            t0, tEnd = startTimes[day], endTimes[day]
+            h = np.timedelta64(3600, 's')
+            trajectories = particleTrajectory(X0, tEnd, h, t0, Vwater, rk2)
+            xArray = trajectories[:, 0, :]
+            yArray = trajectories[:, 1, :]
+            print("Tid brukt:", time.time() - clockStart)
+            print("Plotter bane nr", day + 1)
+            for index in range(numberOfParticles):
+                plt.plot(xArray[:, index], yArray[:, index], label=(str(dateList[day])+". feb"))
+            plt.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc=3, ncol=2, mode="expand", borderaxespad=0.)
+            #plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
+        plt.title("Bane for ulike startdager")
+        print("Tid brukt:", time.time() - clockStart)
+        print("2aplot klart")
+
+def task2b(savefig=False):
+    if savefig:
+        startTime = time.time()
+        numberOfParticles = 3
+        X0 = np.array([-3e6, -3e6, -3e6, -1.2e6, -1.23e6, -1.26e6]).reshape(2, numberOfParticles)
+        #Funker ikke med alt for store verdier
+        print("Startdag 1. feb")
+        print("X0: \n", X0)
+        t0 = np.datetime64('2017-02-01T12:00:00')
+        tEnd = np.datetime64('2017-02-11T12:00:00')
         h = np.timedelta64(3600, 's')
         trajectories = particleTrajectory(X0, tEnd, h, t0, Vwater, rk2)
         xArray = trajectories[:, 0, :]
         yArray = trajectories[:, 1, :]
-        print("Tid brukt:", time.time() - clockStart)
-        print("Plotter bane nr", day + 1)
+        plt.figure("2b")
+        ax = plt.axes(projection=ccrs.NorthPolarStereo())
+        land_10m = cfeature.NaturalEarthFeature('physical','land','10m',color='#00aa00')
+        ax.add_feature(land_10m)
+        ax.coastlines(resolution='10m')
+        p1 = pyproj.Proj(d.projection_stere.proj4)
+        p2 = pyproj.Proj(proj='latlong')
+        plt.title("Ulike startposisjoner 1. feb")
+        ax.set_extent((0.7, 5.7, 58.8, 61.4))
         for index in range(numberOfParticles):
-            plt.plot(xArray[:, index], yArray[:, index], label=(str(dateList[day])+". feb"))
-        plt.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc=3, ncol=2, mode="expand", borderaxespad=0.)
-        #plt.legend(bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
-    plt.title("Bane for ulike startdager")
-    print("Tid brukt:", time.time() - clockStart)
-    print("Viser plott nå")
-    plt.show()
-
-def task2b():
-    startTime = time.time()
-    numberOfParticles = 3
-    X0 = np.array([-3e6, -3e6, -3e6, -1.2e6, -1.23e6, -1.26e6]).reshape(2, numberOfParticles)
-    #Funker ikke med alt for store verdier
-    print("Startdag 1. feb")
-    print("X0: \n", X0)
-    t0 = np.datetime64('2017-02-01T12:00:00')
-    tEnd = np.datetime64('2017-02-11T12:00:00')
-    h = np.timedelta64(3600, 's')
-    trajectories = particleTrajectory(X0, tEnd, h, t0, Vwater, rk2)
-    xArray = trajectories[:, 0, :]
-    yArray = trajectories[:, 1, :]
-    plt.figure()
-    ax = plt.axes(projection=ccrs.NorthPolarStereo())
-    land_10m = cfeature.NaturalEarthFeature('physical','land','10m',color='#00aa00')
-    ax.add_feature(land_10m)
-    ax.coastlines(resolution='10m')
-    p1 = pyproj.Proj(d.projection_stere.proj4)
-    p2 = pyproj.Proj(proj='latlong')
-    plt.title("Ulike startposisjoner 1. feb")
-    ax.set_extent((0.7, 5.7, 58.8, 61.4))
-    for index in range(numberOfParticles):
-        ##############################################################################################
-        lons, lats = pyproj.transform(p1, p2, xArray[:,index], yArray[:,index])
-        ax.plot(lons, lats,".", transform=ccrs.PlateCarree(), zorder=2)
-    print("Viser plott nå")
-    endTime=time.time()
-    print("tid brukt",endTime-startTime)
-    plt.show()
-
-def oppgave2():
-    task2a()
-    task2b()
-
-task2a()
+            ##############################################################################################
+            lons, lats = pyproj.transform(p1, p2, xArray[:,index], yArray[:,index])
+            ax.plot(lons, lats,".", transform=ccrs.PlateCarree(), zorder=2)
+        plt.savefig("Oppgave2pdfer\oppgave2b.pdf")
+        print("oppgave2b.pdf ferdiglagret")
+        endTime=time.time()
+        print("tid brukt på 2b",endTime-startTime)
+    else:
+        startTime = time.time()
+        numberOfParticles = 3
+        X0 = np.array([-3e6, -3e6, -3e6, -1.2e6, -1.23e6, -1.26e6]).reshape(2, numberOfParticles)
+        #Funker ikke med alt for store verdier
+        print("Startdag 1. feb")
+        print("X0: \n", X0)
+        t0 = np.datetime64('2017-02-01T12:00:00')
+        tEnd = np.datetime64('2017-02-11T12:00:00')
+        h = np.timedelta64(3600, 's')
+        trajectories = particleTrajectory(X0, tEnd, h, t0, Vwater, rk2)
+        xArray = trajectories[:, 0, :]
+        yArray = trajectories[:, 1, :]
+        plt.figure("2b")
+        ax = plt.axes(projection=ccrs.NorthPolarStereo())
+        land_10m = cfeature.NaturalEarthFeature('physical','land','10m',color='#00aa00')
+        ax.add_feature(land_10m)
+        ax.coastlines(resolution='10m')
+        p1 = pyproj.Proj(d.projection_stere.proj4)
+        p2 = pyproj.Proj(proj='latlong')
+        plt.title("Ulike startposisjoner 1. feb")
+        ax.set_extent((0.7, 5.7, 58.8, 61.4))
+        for index in range(numberOfParticles):
+            ##############################################################################################
+            lons, lats = pyproj.transform(p1, p2, xArray[:,index], yArray[:,index])
+            ax.plot(lons, lats,".", transform=ccrs.PlateCarree(), zorder=2)
+        print("2bplot klart")
+        endTime=time.time()
+        print("tid brukt på 2b",endTime-startTime)

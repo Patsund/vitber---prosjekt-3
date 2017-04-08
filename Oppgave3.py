@@ -13,6 +13,23 @@ import time
 plt.style.use('bmh')
 startTime=time.time()
 
+def oppgave3(datapath, saving=False):
+    global d, f
+    d  = xr.open_dataset(datapath)
+    f  = Interpolator(dataset = d)
+    if saving:
+        print("**Oppgave 3a med separate plot**")
+        task3a(separate=True, savefig=True)
+        print("**Oppgave 3a med samlet plot**")
+        task3a(savefig=True)
+        print("**Oppgave 3b**")
+        task3b(savefig=True)
+    else:
+        print("**Oppgave 3a**")
+        task3a()
+        print("**Oppgave 3b**")
+        task3b()
+        plt.show()
 #Denne funksjonen gir oss vannhastigheten med bakgrunn i dataene
 class Interpolator():
     def __init__(self, dataset):
@@ -55,9 +72,7 @@ class Interpolator():
         dy = fv(X[0,:], X[1,:], grid = False)
         return np.array([dx, dy])
 
-datapath = 'C:/Users/Patrik/Downloads/NorKyst-800m.nc'
-d  = xr.open_dataset(datapath)
-f  = Interpolator(dataset = d)
+
 t = np.datetime64('2017-02-01T12:00:00')
 X = np.array([-3000000, -1200000]).reshape(2, 1)  #reshape (2,Np)
 #print("Hastighet i dette punktet ved denne tiden:\n",f(X, t))
@@ -102,53 +117,6 @@ def randomX0Array(lowendY,highendY,lowendX,highendX,numberOfParticles):
     for i in range(numberOfParticles):
         finalArray.append(random.randint(lowendX,highendX))
     return finalArray
-def task2a():
-    numberOfParticles = 10000
-    initArray=randomX0Array(-1.21e6,-1.19e6,-3.01e6,-2.99e6,numberOfParticles)
-    print(len(initArray))
-    #print("initArray",initArray)
-    #uglyArray=[-3e6, -3e6, -1.2e6, -1.3e6]
-    X0 = np.array(initArray).reshape(2, numberOfParticles)  # reshape (2,Np)
-    #Funker ikke med alt for store verdier
-    #print("X0: \n", X0)
-    t0 = np.datetime64('2017-02-01T12:00:00')
-    tEnd = np.datetime64('2017-02-11T12:00:00')
-    h = np.timedelta64(3600, 's')
-    trajectories = particleTrajectory(X0, tEnd, h, t0, Vwater, rk2)
-    trajectories = np.hsplit(trajectories, len(trajectories[0]))
-    xArray = trajectories[0]
-    yArray = trajectories[1]
-    #print("xArray in all its glory:\n", xArray)
-    #print("Arrays hver for seg")
-    #print(xArray[:5])
-    #print(yArray[:5])
-    #Her er det nye i denne fila:
-    #print(xArray[0][0][0])
-    #print(xArray[0][0][1])
-    xArrayParticleSplit = np.array([ [xArray[i][0][0] for i in range(len(xArray))] ])
-    yArrayParticleSplit = np.array([ [yArray[i][0][0] for i in range(len(yArray))] ])
-    print("xArrayParticleSplit\n", xArrayParticleSplit[0][:5]) #Denne funker fint
-    for particle in range(1,numberOfParticles): #Append smeller alt i samme brackets. Prøver vstack
-        xArrayParticleSplit = np.vstack((xArrayParticleSplit, np.array([ [xArray[i][0][particle] for i in range(len(xArray))] ])))
-        yArrayParticleSplit = np.vstack((yArrayParticleSplit, np.array([ [yArray[i][0][particle] for i in range(len(yArray))] ])))
-    #print(xArrayParticleSplit)
-    plt.figure()
-    ax = plt.axes(projection=ccrs.NorthPolarStereo())
-    land_10m = cfeature.NaturalEarthFeature('physical','land','10m',color='#00aa00')
-    ax.add_feature(land_10m)
-    ax.coastlines(resolution='10m')
-    p1 = pyproj.Proj(d.projection_stere.proj4)
-    p2 = pyproj.Proj(proj='latlong')
-    plt.title("Partikkelens bane")
-    ax.set_extent((0, 6, 58.5, 62.5))
-    for index in range(numberOfParticles): #endret fra len(xArrayParticleSplit)
-        lons, lats = pyproj.transform(p1, p2, xArrayParticleSplit[index], yArrayParticleSplit[index])
-        ax.plot(lons, lats,".", transform=ccrs.PlateCarree(), zorder=2)
-        #plt.plot(xArrayParticleSplit[index], yArrayParticleSplit[index])
-    print("Viser plott nå")
-    endTime=time.time()
-    print("tid brukt",endTime-startTime)
-    #plt.show()
 
 def task3a(separate=False, savefig=False):
     if savefig:
@@ -391,15 +359,3 @@ def task3b(savefig=False):
             lons, lats = pyproj.transform(p1, p2, coordinates_X, coordinates_Y)
             ax.pcolormesh(lons, lats, concentration.T, transform=ccrs.PlateCarree(), zorder=2, cmap='gist_heat_r')
         #plt.show()
-
-def oppgave3(saving=False):
-    if saving:
-        task3a(separate=True, savefig=True)
-        task3a(savefig=True)
-        task3b(savefig=True)
-    else:
-        task3a()
-        task3b()
-        plt.show()
-
-oppgave3()
